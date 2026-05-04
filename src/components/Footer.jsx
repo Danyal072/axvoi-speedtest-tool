@@ -1,6 +1,7 @@
 "use client";
 
 import { Wifi, ExternalLink, ShieldCheck, Activity } from "lucide-react";
+import Link from "next/link";
 
 const YEAR = new Date().getFullYear();
 
@@ -23,7 +24,7 @@ export default function Footer() {
         <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
           {/* Brand */}
           <div className="flex flex-col items-center gap-3 text-center md:items-start md:text-left">
-            <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3 transition hover:opacity-80" aria-label="AXVOI SpeedTest Home">
               <div className="relative">
                 <div className="absolute inset-0 rounded-xl bg-[#15E28B]/25 blur-md" />
 
@@ -41,7 +42,7 @@ export default function Footer() {
                   Professional Diagnostics
                 </p>
               </div>
-            </div>
+            </Link>
 
             <p className="max-w-sm text-sm leading-6 text-white/40">
               A clean and fast internet speed test experience powered by AXVOI.

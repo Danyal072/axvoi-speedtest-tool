@@ -13,6 +13,14 @@ export const metadata = {
   title: "Privacy Policy — AXVOI SpeedTest by AXVOI",
   description:
     "Privacy Policy for AXVOI SpeedTest by AXVOI. Learn how the tool works, what it does not collect, and how Google Analytics may be used.",
+  alternates: {
+    canonical: "/privacy",
+  },
+  openGraph: {
+    title: "Privacy Policy — AXVOI SpeedTest",
+    description: "Read the Privacy Policy for AXVOI SpeedTest.",
+    url: "https://axvoi.com/privacy",
+  },
 };
 
 const SECTIONS = [

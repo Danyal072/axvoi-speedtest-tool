@@ -1,4 +1,5 @@
 import { Wifi, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import HeaderActions from "./HeaderActions";
 
 export default function Header() {
@@ -6,7 +7,7 @@ export default function Header() {
     <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-[#030813]/80 backdrop-blur-2xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 md:px-8">
         {/* Logo */}
-        <div className="flex items-center gap-4">
+        <Link href="/" className="flex items-center gap-4 transition hover:opacity-80" aria-label="AXVOI SpeedTest Home">
           <div className="relative">
             <div className="absolute inset-0 rounded-2xl bg-[#15E28B]/30 blur-xl" />
 
@@ -30,7 +31,7 @@ export default function Header() {
               Professional Diagnostics
             </p>
           </div>
-        </div>
+        </Link>
 
         {/* Center Badge */}
         <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-semibold text-white/55 shadow-inner lg:flex">

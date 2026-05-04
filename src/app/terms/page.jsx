@@ -11,6 +11,14 @@ export const metadata = {
   title: "Terms & Conditions — AXVOI SpeedTest",
   description:
     "Read the terms and conditions for using AXVOI SpeedTest by AXVOI.",
+  alternates: {
+    canonical: "/terms",
+  },
+  openGraph: {
+    title: "Terms & Conditions — AXVOI SpeedTest",
+    description: "Read the Terms & Conditions for AXVOI SpeedTest.",
+    url: "https://axvoi.com/terms",
+  },
 };
 
 const SECTIONS = [
