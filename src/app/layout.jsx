@@ -38,12 +38,21 @@ export const metadata = {
     siteName: "AXVOI SpeedTest",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image.webp",
+        width: 1200,
+        height: 630,
+        alt: "AXVOI SpeedTest Preview",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "AXVOI SpeedTest",
     description:
       "Test your internet speed instantly — download, upload, ping and jitter.",
+    images: ["/opengraph-image.webp"],
   },
   robots: {
     index: true,
