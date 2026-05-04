@@ -606,6 +606,7 @@ export default function SpeedTestPage() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      // eslint-disable-next-line
       setIsLocalhost(
         ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)
       );
