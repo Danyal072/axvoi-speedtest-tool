@@ -1,20 +1,20 @@
 /**
- * /api/ip — LibreSpeed-compatible IP + ISP detection route.
+ * /api/speedtest/ip — LibreSpeed-compatible IP + ISP detection route.
  *
  * Supports:
- * - /api/ip              -> plain text IP for LibreSpeed basic mode
- * - /api/ip?isp=true     -> JSON with processedString + rawIspInfo
- * - /api/ip?json=true    -> JSON for frontend/HeaderActions
+ * - /api/speedtest/ip              -> plain text IP for LibreSpeed basic mode
+ * - /api/speedtest/ip?isp=true     -> JSON with processedString + rawIspInfo
+ * - /api/speedtest/ip?json=true    -> JSON for frontend/HeaderActions
  */
+
+import { getCorsHeaders } from "../cors";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function corsHeaders(contentType = "text/plain") {
+function corsHeaders(request, contentType = "text/plain") {
   return {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Cache-Control",
+    ...getCorsHeaders(request),
     "Cache-Control":
       "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0, s-maxage=0",
     Pragma: "no-cache",
@@ -113,14 +113,14 @@ export async function GET(request) {
           rawIspInfo: JSON.stringify(ispInfo),
         },
         {
-          headers: corsHeaders("application/json"),
+          headers: corsHeaders(request, "application/json"),
         }
       );
     }
 
     /**
      * Frontend/HeaderActions mode.
-     * Use /api/ip?json=true for React components.
+     * Use /api/speedtest/ip?json=true for React components.
      */
     if (wantsJson) {
       return Response.json(
@@ -134,29 +134,30 @@ export async function GET(request) {
           rawIspInfo: ispInfo,
         },
         {
-          headers: corsHeaders("application/json"),
+          headers: corsHeaders(request, "application/json"),
         }
       );
     }
 
     /**
-     * LibreSpeed default mode expects plain text IP.
+     * LibreSpeed default mode expected plain text IP originally, 
+     * but we now return valid JSON to avoid parsing errors in clients.
      */
-    return new Response(ip, {
-      status: 200,
-      headers: corsHeaders("text/plain"),
-    });
+    return Response.json(
+      { processedString: processedString || ip },
+      { headers: corsHeaders(request, "application/json") }
+    );
   } catch {
-    return new Response("unknown", {
-      status: 200,
-      headers: corsHeaders("text/plain"),
-    });
+    return Response.json(
+      { processedString: "unknown" },
+      { headers: corsHeaders(request, "application/json") }
+    );
   }
 }
 
-export async function OPTIONS() {
+export async function OPTIONS(request) {
   return new Response(null, {
     status: 204,
-    headers: corsHeaders("text/plain"),
+    headers: corsHeaders(request, "text/plain"),
   });
 }

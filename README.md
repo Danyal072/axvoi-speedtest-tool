@@ -1,105 +1,103 @@
 # AXVOI SpeedTest
 
-AXVOI SpeedTest is a modern internet speed testing web app built with Next.js. It helps users test download speed, upload speed, ping, jitter, and connection status through a clean dashboard-style UI.
+AXVOI SpeedTest is a professional, high-performance internet speed testing application built with the **Next.js App Router**. It provides a premium, real-time dashboard for measuring download speed, upload speed, ping, and jitter, while also exposing a robust API for external integration.
 
 ![AXVOI SpeedTest Preview](./public/opengraph-image.webp)
-*(Note: If the preview image above does not render correctly, ensure an image exists at `./public/opengraph-image.webp` or replace it with your own.)*
 
-## Features
+## 🌟 Features
 
-- **Download Speed Test**: Measures how fast your connection receives data in real-time.
-- **Upload Speed Test**: Measures how fast your connection sends data.
-- **Ping & Jitter Test**: Checks latency and stability of your connection.
-- **Animated Speed Dial**: Beautiful, high-performance gauge powered by Framer Motion.
-- **Real-time Test Status**: Clear phases (Ready, Connecting, Download, Latency, Upload, Complete, Stopped).
-- **Start / Stop Control**: Easy-to-use toggle to begin or cancel tests at any time.
-- **Test Result Summary**: Simple assessment of your connection (e.g., "Excellent Connection" or "Needs Attention") upon test completion.
-- **Local Test History**: Automatically saves your most recent tests locally in your browser.
-- **Responsive UI**: A fully responsive layout with Header and Footer components tailored for any device.
-- **Localhost Warning**: Detects and warns you if the backend test is running locally, which could skew real ISP speeds.
-- **Google Analytics (GA4)**: Built-in support for pageview and event tracking using environment variables.
+- **🚀 Real-time Performance Metrics**: High-accuracy measurement of Download, Upload, Ping, and Jitter.
+- **🎨 Premium Nebula Glass UI**: A modern, animated dashboard using Framer Motion and Lucide icons.
+- **📈 Dynamic Speedometer**: An adaptive analog-style gauge that scales based on your connection speed.
+- **🔗 Production-Ready API**: Clean, CORS-enabled endpoints for internal and external speed test clients.
+- **📜 Local Test History**: Keeps track of your last 10 test results locally in the browser.
+- **🌍 IP & ISP Detection**: Automatically identifies your client IP, ISP, and location metadata.
+- **📱 Fully Responsive**: Optimized for desktop, tablet, and mobile devices.
+- **📊 Google Analytics 4**: Integrated GA4 tracking for usage analytics.
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-This project is built using modern web development tools:
+- **Framework**: [Next.js 16 (App Router)](https://nextjs.org/)
+- **Frontend**: [React 19](https://react.dev/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Engine**: [LibreSpeed](https://github.com/librespeed/speedtest) (Customized integration)
+- **Deployment**: Optimized for Vercel and Node.js environments.
 
-- **Next.js**: React framework for production.
-- **React**: Library for building user interfaces.
-- **Tailwind CSS (v4)**: Utility-first CSS framework for rapid UI development.
-- **Framer Motion**: Production-ready animation library for React.
-- **Lucide React**: Beautiful & consistent icon toolkit.
-- **LibreSpeed**: The core backend/frontend testing engine (`speedtest.js` & `speedtest_worker.js`).
-- **Google Analytics 4**: Conditional loading via Next.js Script component.
-
-## Folder Structure
-
-A brief overview of the main files and folders in the project:
+## 📂 Project Structure
 
 ```text
 ├── public/
-│   ├── opengraph-image.webp
-│   ├── speedtest.js
-│   └── speedtest_worker.js
-└── src/
-    ├── app/
-    │   ├── api/
-    │   ├── privacy/
-    │   ├── terms/
-    │   ├── globals.css
-    │   ├── layout.jsx
-    │   └── page.jsx
-    └── components/
-        ├── Footer.jsx
-        ├── GoogleAnalytics.jsx
-        ├── Header.jsx
-        └── HeaderActions.jsx
+│   ├── speedtest.js          # Main speed test engine (LibreSpeed)
+│   ├── speedtest_worker.js   # Background worker for measurements
+│   └── garbage.dat           # Static fallback for download tests
+├── src/
+│   ├── app/
+│   │   ├── api/speedtest/    # Backend API logic & CORS helper
+│   │   ├── privacy/          # Privacy policy page
+│   │   ├── terms/            # Terms of service page
+│   │   ├── globals.css       # Global styles & Tailwind config
+│   │   ├── layout.jsx        # Root layout with SEO metadata
+│   │   └── page.jsx          # Main SpeedTest dashboard
+│   └── components/           # Reusable UI components
+│       ├── Header.jsx
+│       ├── Footer.jsx
+│       ├── HeaderActions.jsx # IP detection UI
+│       └── GoogleAnalytics.jsx
+└── .env.local                # Environment configuration
 ```
 
-## Getting Started
+## 🚀 Getting Started
 
-### Prerequisites
+### 1. Prerequisites
+- **Node.js**: v20 or higher recommended.
+- **Package Manager**: `pnpm` is used in this project (npm or yarn also work).
 
-Ensure you have [Node.js](https://nodejs.org/) installed along with `npm`, `yarn`, or `pnpm` (the project currently uses `pnpm`).
-
-### Installation
-
-1. Clone or download the repository.
-2. Install dependencies:
-
+### 2. Installation
 ```bash
+git clone <repository-url>
+cd speedtest
 pnpm install
-# or npm install / yarn install
 ```
 
-### Environment Variables
-
-If you wish to use Google Analytics, copy the example environment file or create a `.env.local` file:
-
-```bash
-cp env.example .env.local
-```
-
-Inside `.env.local`, set your GA Measurement ID:
-
+### 3. Environment Setup
+Create a `.env.local` file in the root directory:
 ```env
-NEXT_PUBLIC_GA_MEASUREMENT_ID="G-XXXXXXXXXX"
+# Google Analytics 4 (Optional)
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# CORS Settings (Optional)
+# Use '*' to allow all origins or a comma-separated list of URLs
+SPEEDTEST_ALLOWED_ORIGINS=*
 ```
 
-### Running Locally
-
-Start the development server:
-
+### 4. Development Server
 ```bash
 pnpm dev
-# or npm run dev / yarn dev
 ```
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the app.
+## 🔌 API Documentation
 
-*(Note: While running locally, you will see a localhost warning as the speed test will likely run against your local network rather than your real ISP.)*
+AXVOI SpeedTest provides a dedicated API namespace at `/api/speedtest/`. All routes support **CORS preflight (OPTIONS)** for cross-origin requests.
 
-## Customization
+| Endpoint | Method | Description |
+| :--- | :--- | :--- |
+| `/api/speedtest/health` | `GET` | API status and version check. |
+| `/api/speedtest/config` | `GET` | Returns engine configuration and route mapping. |
+| `/api/speedtest/ip` | `GET` | Returns client IP. Supports `?json=true` for metadata. |
+| `/api/speedtest/garbage`| `GET` | Generates random data for download testing. |
+| `/api/speedtest/empty`  | `GET/POST`| Used for Ping (GET) and Upload (POST) testing. |
 
-- **UI Elements**: Check `src/app/page.jsx` to adjust dial settings, test phases, and Framer Motion configurations.
-- **Metadata**: Modify SEO and OpenGraph details directly in `src/app/layout.jsx`.
-- **Global Styles**: Global CSS configurations and Tailwind directives are in `src/app/globals.css`.
+### CORS Support
+If you are testing from a separate client (e.g., a standalone HTML file on `localhost:5500`), ensure `SPEEDTEST_ALLOWED_ORIGINS` is set correctly in your `.env.local` to avoid preflight errors.
+
+## 🧪 Testing with External Client
+To test the API from an external local client:
+1. Start the Next.js app on `localhost:3000`.
+2. Ensure your client (e.g., `127.0.0.1:5500`) is allowed in `SPEEDTEST_ALLOWED_ORIGINS`.
+3. The client should call `http://localhost:3000/api/speedtest/config` to get the necessary test paths.
+
+## 📝 License
+This project is proprietary and built for AXVOI. Please refer to the [Terms of Service](./src/app/terms/page.jsx) for usage guidelines.

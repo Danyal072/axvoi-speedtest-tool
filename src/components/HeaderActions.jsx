@@ -294,7 +294,7 @@ export default function HeaderActions() {
   useEffect(() => {
     let alive = true;
 
-    fetch("/api/ip?json=true", { cache: "no-store" })
+    fetch("/api/speedtest/ip?json=true", { cache: "no-store" })
       .then((r) => {
         if (!r.ok) throw new Error("Failed to load IP");
         return r.json();

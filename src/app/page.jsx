@@ -808,10 +808,10 @@ export default function SpeedTestPage() {
     const s = new window.Speedtest();
     ref.current = s;
 
-    s.setParameter("url_dl", "/api/garbage");
-    s.setParameter("url_ul", "/api/empty");
-    s.setParameter("url_ping", "/api/empty");
-    s.setParameter("url_getIp", "/api/ip");
+    s.setParameter("url_dl", "/api/speedtest/garbage");
+    s.setParameter("url_ul", "/api/speedtest/empty");
+    s.setParameter("url_ping", "/api/speedtest/empty");
+    s.setParameter("url_getIp", "/api/speedtest/ip");
 
     s.setParameter("test_order", "IP_D_U");
 

@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { getCorsHeaders } from "../cors";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -56,22 +57,16 @@ export async function GET(request) {
       Pragma: "no-cache",
       Expires: "0",
 
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Cache-Control",
-
       "X-Content-Type-Options": "nosniff",
+      
+      ...getCorsHeaders(request),
     },
   });
 }
 
-export async function OPTIONS() {
+export async function OPTIONS(request) {
   return new Response(null, {
     status: 204,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Cache-Control",
-    },
+    headers: getCorsHeaders(request),
   });
 }
