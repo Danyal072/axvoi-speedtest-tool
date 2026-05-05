@@ -1,0 +1,82 @@
+/* Optimized CSS animations to replace Framer Motion where possible */
+
+/* Pulsing indicator animation - lightweight alternative */
+@keyframes pulse-indicator {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.45);
+  }
+}
+
+.animate-pulse-indicator {
+  animation: pulse-indicator 1.25s ease-in-out infinite;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-fast {
+  animation: spin 1s linear infinite;
+}
+
+/* Subtle background scale animation - less intensive */
+@keyframes bg-scale-1 {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.06;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.13;
+  }
+}
+
+@keyframes bg-scale-2 {
+  0%, 100% {
+    transform: scale(1.04);
+    opacity: 0.04;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 0.09;
+  }
+}
+
+.animate-bg-scale-1 {
+  animation: bg-scale-1 8s ease-in-out infinite;
+  /* Improve performance with will-change and containment */
+  contain: layout style;
+  will-change: transform, opacity;
+}
+
+.animate-bg-scale-2 {
+  animation: bg-scale-2 11s ease-in-out infinite 1.5s;
+  contain: layout style;
+  will-change: transform, opacity;
+}
+
+/* Reduce blur effect for background - major performance improvement */
+.blur-reduced {
+  filter: blur(75px);
+}
+
+/* Optimize backdrop blur */
+.backdrop-blur-xl {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Isolate animations to prevent layout thrashing */
+.animate-isolated {
+  isolation: isolate;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}

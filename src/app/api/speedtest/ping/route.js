@@ -21,6 +21,13 @@ function getHeaders(request) {
   };
 }
 
+export async function OPTIONS(request) {
+  return new Response(null, {
+    status: 204,
+    headers: getHeaders(request),
+  });
+}
+
 export async function GET(request) {
   return new Response("", {
     status: 200,
@@ -31,13 +38,6 @@ export async function GET(request) {
 export async function POST(request) {
   return new Response("", {
     status: 200,
-    headers: getHeaders(request),
-  });
-}
-
-export async function OPTIONS(request) {
-  return new Response(null, {
-    status: 204,
     headers: getHeaders(request),
   });
 }

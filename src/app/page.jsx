@@ -29,6 +29,7 @@ import {
   Gauge,
   Server,
 } from "lucide-react";
+import SpeedTestFAQ from "@/components/SpeedTestFAQ";
 
 /* ─── Constants ─────────────────────────────────────────────── */
 
@@ -103,9 +104,34 @@ function getDialMax(speed) {
   return Math.max(100, Math.ceil((current + 50) / 50) * 50);
 }
 
-function safeNumber(value) {
+function safeNumber(value, fallback = 0) {
+  if (
+    value === null ||
+    value === undefined ||
+    value === "" ||
+    value === "..." ||
+    value === "NaN"
+  ) {
+    return fallback;
+  }
+
   const n = parseFloat(value);
-  return Number.isFinite(n) ? n : 0;
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function hasValidNumber(value) {
+  if (
+    value === null ||
+    value === undefined ||
+    value === "" ||
+    value === "..." ||
+    value === "NaN"
+  ) {
+    return false;
+  }
+
+  const n = parseFloat(value);
+  return Number.isFinite(n);
 }
 
 const polarToCartesian = (cx, cy, r, angleInDegrees) => {
@@ -119,14 +145,20 @@ const polarToCartesian = (cx, cy, r, angleInDegrees) => {
 
 /* ─── Animated Number ─────────────────────────────────────── */
 
-function AnimatedNumber({ value, fmt }) {
+function AnimatedNumber({ value, fmt, isValid = true }) {
   const mv = useMotionValue(0);
   const sv = useSpring(mv, { bounce: 0, duration: 650 });
   const disp = useTransform(sv, fmt);
 
   useEffect(() => {
-    mv.set(value || 0);
-  }, [value, mv]);
+    if (isValid) {
+      mv.set(value || 0);
+    }
+  }, [value, mv, isValid]);
+
+  if (!isValid) {
+    return <span>—</span>;
+  }
 
   return <motion.span>{disp}</motion.span>;
 }
@@ -135,34 +167,15 @@ function AnimatedNumber({ value, fmt }) {
 
 function AmbientBg({ color }) {
   return (
-    <div className="fixed inset-0 z-0 overflow-hidden bg-[#030813] pointer-events-none">
-      <motion.div
-        className="absolute -left-[14%] -top-[36%] h-[66vw] w-[66vw] rounded-full blur-[150px]"
-        animate={{
-          backgroundColor: color,
-          scale: [1, 1.06, 1],
-          opacity: [0.06, 0.13, 0.06],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#030813]">
+      <div
+        className="blur-reduced animate-bg-scale-1 absolute -left-[14%] -top-[36%] h-[66vw] w-[66vw] rounded-full"
+        style={{ backgroundColor: color }}
       />
 
-      <motion.div
-        className="absolute -bottom-[36%] -right-[14%] h-[58vw] w-[58vw] rounded-full blur-[145px]"
+      <div
+        className="blur-reduced animate-bg-scale-2 absolute -bottom-[36%] -right-[14%] h-[58vw] w-[58vw] rounded-full"
         style={{ backgroundColor: "#15E28B" }}
-        animate={{
-          scale: [1.04, 1, 1.04],
-          opacity: [0.04, 0.09, 0.04],
-        }}
-        transition={{
-          duration: 11,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1.5,
-        }}
       />
 
       <div className="absolute inset-0 bg-[radial-gradient(rgba(21,226,139,0.045)_1px,transparent_1px)] bg-[size:44px_44px]" />
@@ -172,9 +185,7 @@ function AmbientBg({ color }) {
   );
 }
 
-/* ─── Localhost Warning ───────────────────────────────────── */
-
-function LocalhostWarning() {
+const LocalhostWarning = React.memo(() => {
   return (
     <div className="rounded-2xl border border-orange-400/25 bg-orange-400/10 px-4 py-3 backdrop-blur-xl">
       <div className="flex items-start gap-3">
@@ -187,11 +198,13 @@ function LocalhostWarning() {
       </div>
     </div>
   );
-}
+});
+
+LocalhostWarning.displayName = "LocalhostWarning";
 
 /* ─── Status Badge ────────────────────────────────────────── */
 
-function StatusBadge({ loaded, testState, color, engineError }) {
+const StatusBadge = React.memo(({ loaded, testState, color, engineError }) => {
   return (
     <AnimatePresence mode="wait">
       {engineError ? (
@@ -215,7 +228,7 @@ function StatusBadge({ loaded, testState, color, engineError }) {
           exit={{ opacity: 0, y: 6 }}
           className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.045] px-4 py-2 backdrop-blur-xl"
         >
-          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/10 border-t-[#15E28B]" />
+          <div className="animate-spin-fast h-3.5 w-3.5 rounded-full border-2 border-white/10 border-t-[#15E28B]" />
           <span className="text-[10px] font-black uppercase tracking-[0.22em] text-white/45">
             Loading
           </span>
@@ -233,10 +246,8 @@ function StatusBadge({ loaded, testState, color, engineError }) {
             boxShadow: `0 0 18px ${color}14`,
           }}
         >
-          <motion.span
-            className="block h-2.5 w-2.5 rounded-full"
-            animate={{ scale: [1, 1.4, 1], opacity: [0.75, 1, 0.75] }}
-            transition={{ duration: 1.6, repeat: Infinity }}
+          <span
+            className="animate-pulse-indicator block h-2.5 w-2.5 rounded-full"
             style={{
               backgroundColor: color,
               boxShadow: `0 0 10px ${color}`,
@@ -250,7 +261,9 @@ function StatusBadge({ loaded, testState, color, engineError }) {
       )}
     </AnimatePresence>
   );
-}
+});
+
+StatusBadge.displayName = "StatusBadge";
 
 /* ─── Speed Dial ──────────────────────────────────────────── */
 
@@ -336,14 +349,14 @@ function SpeedDial({
   });
 
   return (
-    <div className="relative mx-auto flex h-[330px] w-[330px] items-center justify-center font-sans select-none sm:h-[380px] sm:w-[380px]">
+    <div className="relative mx-auto flex h-[330px] w-[330px] select-none items-center justify-center font-sans sm:h-[380px] sm:w-[380px]">
       <div
-        className="absolute inset-6 rounded-full opacity-10 blur-3xl transition-colors duration-700 pointer-events-none"
+        className="pointer-events-none absolute inset-6 rounded-full opacity-10 blur-3xl transition-colors duration-700"
         style={{ backgroundColor: color }}
       />
 
       <svg
-        className="absolute inset-0 h-full w-full pointer-events-none"
+        className="pointer-events-none absolute inset-0 h-full w-full"
         viewBox={`0 0 ${size} ${size}`}
         style={{ overflow: "visible" }}
       >
@@ -555,83 +568,86 @@ function SpeedDial({
 
 /* ─── Mini Metric ──────────────────────────────────────────── */
 
-function MiniMetric({ label, value, unit, icon: Icon, active, color }) {
-  return (
-    <motion.div
-      className="relative overflow-hidden rounded-2xl border px-4 py-3 backdrop-blur-xl"
-      style={{
-        background: active
-          ? `linear-gradient(135deg, ${color}16, rgba(255,255,255,0.035))`
-          : "rgba(255,255,255,0.035)",
-        borderColor: active ? `${color}50` : "rgba(255,255,255,0.09)",
-      }}
-      whileHover={{ y: -2 }}
-    >
-      {active && (
-        <div
-          className="absolute inset-0 opacity-10 blur-2xl"
-          style={{ backgroundColor: color }}
-        />
-      )}
-
-      <div className="relative z-10 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div
-            className="flex h-9 w-9 items-center justify-center rounded-xl border"
-            style={{
-              background: active ? `${color}1F` : "rgba(255,255,255,0.055)",
-              borderColor: active ? `${color}40` : "rgba(255,255,255,0.1)",
-            }}
-          >
-            <Icon
-              size={16}
-              style={{ color: active ? color : "rgba(255,255,255,0.45)" }}
-            />
-          </div>
-
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
-              {label}
-            </p>
-
-            <div className="mt-1 flex items-end gap-1">
-              <span
-                className="text-2xl font-black leading-none tabular-nums"
-                style={{
-                  color: active ? color : "rgba(255,255,255,0.9)",
-                }}
-              >
-                <AnimatedNumber
-                  value={value}
-                  fmt={(v) =>
-                    v === 0 ? "—" : v < 10 ? v.toFixed(2) : v.toFixed(1)
-                  }
-                />
-              </span>
-
-              <span className="pb-0.5 text-[10px] font-bold uppercase text-white/35">
-                {unit}
-              </span>
-            </div>
-          </div>
-        </div>
-
+const MiniMetric = React.memo(
+  ({ label, value, unit, icon: Icon, active, color, isValid = true }) => {
+    return (
+      <motion.div
+        className="relative overflow-hidden rounded-2xl border px-4 py-3 backdrop-blur-xl"
+        style={{
+          background: active
+            ? `linear-gradient(135deg, ${color}16, rgba(255,255,255,0.035))`
+            : "rgba(255,255,255,0.035)",
+          borderColor: active ? `${color}50` : "rgba(255,255,255,0.09)",
+        }}
+        whileHover={{ y: -2 }}
+      >
         {active && (
-          <motion.span
-            className="h-2 w-2 rounded-full"
+          <div
+            className="absolute inset-0 opacity-10 blur-2xl"
             style={{ backgroundColor: color }}
-            animate={{ opacity: [1, 0.35, 1], scale: [1, 1.45, 1] }}
-            transition={{ duration: 1.25, repeat: Infinity }}
           />
         )}
-      </div>
-    </motion.div>
-  );
-}
+
+        <div className="relative z-10 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div
+              className="flex h-9 w-9 items-center justify-center rounded-xl border"
+              style={{
+                background: active ? `${color}1F` : "rgba(255,255,255,0.055)",
+                borderColor: active ? `${color}40` : "rgba(255,255,255,0.1)",
+              }}
+            >
+              <Icon
+                size={16}
+                style={{ color: active ? color : "rgba(255,255,255,0.45)" }}
+              />
+            </div>
+
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+                {label}
+              </p>
+
+              <div className="mt-1 flex items-end gap-1">
+                <span
+                  className="text-2xl font-black leading-none tabular-nums"
+                  style={{
+                    color: active ? color : "rgba(255,255,255,0.9)",
+                  }}
+                >
+                  <AnimatedNumber
+                    value={value}
+                    isValid={isValid}
+                    fmt={(v) =>
+                      v < 10 && v > 0 ? v.toFixed(2) : v.toFixed(1)
+                    }
+                  />
+                </span>
+
+                <span className="pb-0.5 text-[10px] font-bold uppercase text-white/35">
+                  {isValid ? unit : ""}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {active && (
+            <span
+              className="animate-pulse-indicator h-2 w-2 rounded-full"
+              style={{ backgroundColor: color }}
+            />
+          )}
+        </div>
+      </motion.div>
+    );
+  }
+);
+
+MiniMetric.displayName = "MiniMetric";
 
 /* ─── Step Bar ─────────────────────────────────────────────── */
 
-function StepBar({ testState }) {
+const StepBar = React.memo(({ testState }) => {
   const steps = [
     { id: 2, label: "Ping", icon: Activity },
     { id: 1, label: "Download", icon: ArrowDown },
@@ -667,57 +683,151 @@ function StepBar({ testState }) {
       })}
     </div>
   );
-}
+});
+
+StepBar.displayName = "StepBar";
 
 /* ─── Result Box ───────────────────────────────────────────── */
 
-function ResultBox({ testState, dlVal, ulVal, pingVal, isLocalhost }) {
-  if (testState !== 4) return null;
+const ResultBox = React.memo(
+  ({ testState, dlVal, ulVal, pingVal, isLocalhost }) => {
+    if (testState !== 4) return null;
 
-  let label = "Good Connection";
-  let description = "Your network looks stable for browsing and daily work.";
+    let label = "Good Connection";
+    let description = "Your network looks stable for browsing and daily work.";
 
-  if (isLocalhost) {
-    label = "Localhost Result";
-    description =
-      "This is not your real ISP speed because the backend is running locally.";
-  } else if (dlVal >= 200 && ulVal >= 50 && pingVal <= 30) {
-    label = "Excellent Connection";
-    description = "Great for 4K streaming, gaming, meetings and cloud work.";
-  } else if (dlVal < 25 || pingVal > 100) {
-    label = "Needs Attention";
-    description = "Your connection may feel slow for calls, uploads or gaming.";
+    if (isLocalhost) {
+      label = "Localhost Result";
+      description =
+        "This is not your real ISP speed because the backend is running locally.";
+    } else if (dlVal >= 200 && ulVal >= 50 && pingVal <= 30) {
+      label = "Excellent Connection";
+      description = "Great for 4K streaming, gaming, meetings and cloud work.";
+    } else if (dlVal < 25 || pingVal > 100) {
+      label = "Needs Attention";
+      description = "Your connection may feel slow for calls, uploads or gaming.";
+    }
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-2xl border border-[#15E28B]/20 bg-[#15E28B]/[0.07] p-4 backdrop-blur-xl"
+      >
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#15E28B]/25 bg-[#15E28B]/10">
+            <ShieldCheck size={18} className="text-[#15E28B]" />
+          </div>
+
+          <div>
+            <h3 className="text-sm font-black text-white">{label}</h3>
+            <p className="mt-1 text-xs leading-5 text-white/45">
+              {description}
+            </p>
+          </div>
+        </div>
+      </motion.div>
+    );
   }
+);
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-[#15E28B]/20 bg-[#15E28B]/[0.07] p-4 backdrop-blur-xl"
-    >
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#15E28B]/25 bg-[#15E28B]/10">
-          <ShieldCheck size={18} className="text-[#15E28B]" />
-        </div>
-
-        <div>
-          <h3 className="text-sm font-black text-white">{label}</h3>
-          <p className="mt-1 text-xs leading-5 text-white/45">
-            {description}
-          </p>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
+ResultBox.displayName = "ResultBox";
 
 /* ─── Info Card ───────────────────────────────────────────── */
 
-function InfoCard({ children }) {
+const InfoCard = React.memo(({ children }) => {
   return (
     <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.028] p-4 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-5">
       {children}
     </div>
+  );
+});
+
+InfoCard.displayName = "InfoCard";
+
+/* ─── SEO Content Section ─────────────────────────────────── */
+
+function SpeedTestGuide() {
+  return (
+    <section className="relative z-10 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl rounded-[1.75rem] border border-white/10 bg-white/[0.035] p-6 backdrop-blur-2xl sm:p-8">
+        <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#15E28B]">
+          Internet Performance Guide
+        </p>
+
+        <h2 className="mt-3 text-2xl font-black tracking-tight text-white sm:text-3xl">
+          Understand Your Internet Speed Test Results
+        </h2>
+
+        <div className="mt-5 space-y-5 text-sm leading-7 text-white/55 sm:text-base">
+          <p>
+            AXVOI SpeedTest helps you measure the real performance of your
+            internet connection by checking download speed, upload speed, ping,
+            jitter, and overall connection stability. These results help you
+            understand whether your network is suitable for browsing, streaming,
+            online meetings, gaming, cloud work, and large file transfers.
+          </p>
+
+          <p>
+            Download speed shows how quickly your connection receives data from
+            the internet. It affects video streaming, website loading, software
+            updates, file downloads, and daily browsing. Upload speed shows how
+            quickly your connection sends data, which is important for video
+            calls, cloud backups, live streaming, and sending large files.
+          </p>
+
+          <p>
+            Ping measures the response time between your device and the test
+            server. Lower ping usually means a faster and more responsive
+            connection. Jitter measures how stable that response time is. A
+            connection with low jitter is better for online gaming, video
+            conferencing, voice calls, and remote work.
+          </p>
+
+          <p>
+            For the most accurate result, close unnecessary apps, pause
+            background downloads, disconnect unused devices, and test using a
+            wired Ethernet connection when possible. Wi-Fi results may change
+            depending on router distance, walls, signal interference, connected
+            devices, and router quality.
+          </p>
+        </div>
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <div className="rounded-2xl border border-white/10 bg-black/15 p-5">
+            <h3 className="text-lg font-black text-white">Download Speed</h3>
+            <p className="mt-2 text-sm leading-6 text-white/50">
+              Download speed affects streaming, browsing, file downloads, app
+              updates, and how quickly online content loads on your device.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-black/15 p-5">
+            <h3 className="text-lg font-black text-white">Upload Speed</h3>
+            <p className="mt-2 text-sm leading-6 text-white/50">
+              Upload speed matters for video meetings, sending files, cloud
+              storage, online backups, and live streaming.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-black/15 p-5">
+            <h3 className="text-lg font-black text-white">Ping</h3>
+            <p className="mt-2 text-sm leading-6 text-white/50">
+              Ping shows how quickly your device gets a response from the
+              server. Lower ping gives a smoother real-time experience.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-black/15 p-5">
+            <h3 className="text-lg font-black text-white">Jitter</h3>
+            <p className="mt-2 text-sm leading-6 text-white/50">
+              Jitter shows how stable your ping is. Lower jitter is better for
+              gaming, calls, meetings, and live communication.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -741,26 +851,32 @@ export default function SpeedTestPage() {
   }, []);
 
   useEffect(() => {
-    const s = document.createElement("script");
+    const timer = setTimeout(() => {
+      const s = document.createElement("script");
+      s.src = "/speedtest.js";
+      s.async = true;
 
-    s.src = "/speedtest.js";
-    s.async = true;
+      s.onload = () => {
+        setEngineLoaded(true);
+        setEngineError(false);
+      };
 
-    s.onload = () => {
-      setEngineLoaded(true);
-      setEngineError(false);
-    };
+      s.onerror = () => {
+        console.error("LibreSpeed engine failed to load from /speedtest.js");
+        setEngineLoaded(false);
+        setEngineError(true);
+      };
 
-    s.onerror = () => {
-      console.error("LibreSpeed engine failed to load from /speedtest.js");
-      setEngineLoaded(false);
-      setEngineError(true);
-    };
-
-    document.body.appendChild(s);
+      document.body.appendChild(s);
+    }, 300);
 
     return () => {
-      document.body.removeChild(s);
+      clearTimeout(timer);
+
+      const existingScript = document.querySelector('script[src="/speedtest.js"]');
+      if (existingScript) {
+        existingScript.remove();
+      }
 
       if (ref.current) {
         try {
@@ -810,7 +926,7 @@ export default function SpeedTestPage() {
 
     s.setParameter("url_dl", "/api/speedtest/garbage");
     s.setParameter("url_ul", "/api/speedtest/empty");
-    s.setParameter("url_ping", "/api/speedtest/empty");
+    s.setParameter("url_ping", "/api/speedtest/ping");
     s.setParameter("url_getIp", "/api/speedtest/ip");
 
     s.setParameter("test_order", "IP_D_U");
@@ -871,6 +987,11 @@ export default function SpeedTestPage() {
   const ulSpeed = testState === 3 ? safeNumber(liveData?.ulStatus) : 0;
   const speed = dlSpeed || ulSpeed;
 
+  const pingValid = hasValidNumber(liveData?.pingStatus);
+  const jitterValid = hasValidNumber(liveData?.jitterStatus);
+  const dlValid = hasValidNumber(liveData?.dlStatus);
+  const ulValid = hasValidNumber(liveData?.ulStatus);
+
   const pingVal = safeNumber(liveData?.pingStatus);
   const jitterVal = safeNumber(liveData?.jitterStatus);
   const dlVal = safeNumber(liveData?.dlStatus);
@@ -882,12 +1003,11 @@ export default function SpeedTestPage() {
   );
 
   return (
-    <main className="relative w-full overflow-x-hidden bg-[#030813] text-white selection:bg-[#15E28B]/20">
+    <div className="relative w-full overflow-x-hidden bg-[#030813] text-white selection:bg-[#15E28B]/20">
       <AmbientBg color={color} />
 
       <section className="relative z-10 flex min-h-[calc(100svh-86px)] w-full items-center px-4 py-6 sm:px-6 lg:px-8">
         <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-5 xl:grid-cols-[340px_1fr_340px]">
-          {/* Left Panel */}
           <motion.aside
             initial={{ opacity: 0, x: -18 }}
             animate={{ opacity: 1, x: 0 }}
@@ -936,7 +1056,6 @@ export default function SpeedTestPage() {
             {isLocalhost && <LocalhostWarning />}
           </motion.aside>
 
-          {/* Center */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -958,7 +1077,7 @@ export default function SpeedTestPage() {
               className="mt-4"
             >
               <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
-                {phaseInfo.title}
+                Internet Speed Test
               </h1>
 
               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-white/52 sm:text-base">
@@ -979,7 +1098,6 @@ export default function SpeedTestPage() {
             </div>
           </motion.div>
 
-          {/* Right Panel */}
           <motion.aside
             initial={{ opacity: 0, x: 18 }}
             animate={{ opacity: 1, x: 0 }}
@@ -993,13 +1111,13 @@ export default function SpeedTestPage() {
                 </div>
 
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/35">
+                  <h2 className="text-[10px] font-black uppercase tracking-[0.24em] text-white/35">
                     Active Status
-                  </p>
-
-                  <h2 className="mt-1 text-xl font-black" style={{ color }}>
-                    {phaseInfo.label}
                   </h2>
+
+                  <p className="mt-1 text-xl font-black" style={{ color }}>
+                    {phaseInfo.label}
+                  </p>
                 </div>
               </div>
 
@@ -1025,7 +1143,6 @@ export default function SpeedTestPage() {
             />
           </motion.aside>
 
-          {/* Metrics */}
           <motion.div
             className="order-4 grid w-full gap-3 sm:grid-cols-2 xl:col-span-3 xl:grid-cols-4"
             initial={{ opacity: 0, y: 16 }}
@@ -1043,6 +1160,7 @@ export default function SpeedTestPage() {
               icon={Activity}
               active={testState === 2}
               color={COLORS.ping}
+              isValid={pingValid}
             />
 
             <MiniMetric
@@ -1052,6 +1170,7 @@ export default function SpeedTestPage() {
               icon={Zap}
               active={testState === 2}
               color="#facc15"
+              isValid={jitterValid}
             />
 
             <MiniMetric
@@ -1061,6 +1180,7 @@ export default function SpeedTestPage() {
               icon={ArrowDown}
               active={testState === 1}
               color={COLORS.dl}
+              isValid={dlValid}
             />
 
             <MiniMetric
@@ -1070,10 +1190,15 @@ export default function SpeedTestPage() {
               icon={ArrowUp}
               active={testState === 3}
               color={COLORS.ul}
+              isValid={ulValid}
             />
           </motion.div>
         </div>
       </section>
-    </main>
+
+      <SpeedTestGuide />
+
+      <SpeedTestFAQ />
+    </div>
   );
 }

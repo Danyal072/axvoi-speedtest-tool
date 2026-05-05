@@ -3,7 +3,7 @@ import "./globals.css";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
+import GoogleAnalyticsWrapper from "@/components/GoogleAnalyticsWrapper";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -19,22 +19,31 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata = {
   metadataBase: new URL("https://axvoi.com"),
-  title: "AXVOI SpeedTest — Test Your Internet Speed",
+  title: "Internet Speed Test — Check WiFi, Ping & Broadband Speed | AXVOI",
   description:
-    "Fast, accurate internet speed test powered by AXVOI. Measure your download speed, upload speed, ping, and jitter in seconds.",
+    "Test your internet speed instantly with AXVOI SpeedTest. Check download speed, upload speed, ping, jitter, WiFi performance, broadband speed, latency, and network stability in seconds.",
   keywords: [
+    "internet speed test",
     "speed test",
-    "internet speed",
-    "bandwidth test",
+    "WiFi speed test",
+    "broadband speed test",
+    "download speed test",
+    "upload speed test",
     "ping test",
-    "network diagnostic",
+    "latency test",
+    "jitter test",
+    "network stability test",
+    "bandwidth test",
+    "connection speed test",
+    "online speed test",
+    "AXVOI SpeedTest",
     "AXVOI",
   ],
   authors: [{ name: "AXVOI" }],
   openGraph: {
-    title: "AXVOI SpeedTest - Test Your Internet Speed",
+    title: "Internet Speed Test — Check WiFi, Ping & Broadband Speed | AXVOI",
     description:
-      "Test your internet speed instantly — download, upload, ping and jitter.",
+      "Test your internet speed instantly with AXVOI SpeedTest. Check download speed, upload speed, ping, jitter, WiFi performance, broadband speed, latency, and network stability in seconds.",
     url: "https://axvoi.com",
     siteName: "AXVOI SpeedTest",
     locale: "en_US",
@@ -44,15 +53,15 @@ export const metadata = {
         url: "/opengraph-image.webp",
         width: 1200,
         height: 630,
-        alt: "AXVOI SpeedTest Preview",
+        alt: "AXVOI SpeedTest internet speed test dashboard preview",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AXVOI SpeedTest",
+    title: "Internet Speed Test — Check WiFi, Ping & Broadband Speed | AXVOI",
     description:
-      "Test your internet speed instantly — download, upload, ping and jitter.",
+      "Test your internet speed instantly with AXVOI SpeedTest. Check download speed, upload speed, ping, jitter, WiFi performance, broadband speed, latency, and network stability in seconds.",
     images: ["/opengraph-image.webp"],
   },
   robots: {
@@ -67,7 +76,6 @@ export const metadata = {
     },
   },
 };
-
 export const viewport = {
   width: "device-width",
   initialScale: 1,
@@ -77,28 +85,140 @@ export const viewport = {
 export default function RootLayout({ children }) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "AXVOI SpeedTest",
-    "description": "Professional, highly accurate internet speed test tool. Measure your download speed, upload speed, ping, and jitter instantly with zero ads.",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "All",
-    "url": "https://axvoi.com",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "featureList": [
-      "Real-time download speed testing",
-      "Real-time upload speed testing",
-      "Ping and Jitter measurements",
-      "Secure and private"
-    ],
-    "author": {
-      "@type": "Organization",
-      "name": "AXVOI",
-      "url": "https://axvoi.com"
-    }
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://axvoi.com/#organization",
+        "name": "AXVOI",
+        "url": "https://axvoi.com",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://axvoi.com/logo.png"
+        },
+        "sameAs": []
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://axvoi.com/#website",
+        "url": "https://axvoi.com",
+        "name": "AXVOI SpeedTest",
+        "alternateName": "AXVOI Internet Speed Test",
+        "description": "AXVOI SpeedTest is an online internet speed test tool for checking download speed, upload speed, ping, jitter, WiFi performance, broadband speed, latency, bandwidth, and network stability.",
+        "publisher": {
+          "@id": "https://axvoi.com/#organization"
+        },
+        "inLanguage": "en-US"
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://axvoi.com/#webapplication",
+        "name": "AXVOI SpeedTest",
+        "url": "https://axvoi.com",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript and a modern web browser.",
+        "description": "Test your internet speed instantly with AXVOI SpeedTest. Check download speed, upload speed, ping, jitter, WiFi performance, broadband speed, latency, bandwidth, and network stability in seconds.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Internet speed test",
+          "Download speed test",
+          "Upload speed test",
+          "Ping test",
+          "Jitter test",
+          "Latency test",
+          "WiFi speed test",
+          "Broadband speed test",
+          "Bandwidth test",
+          "Network stability test",
+          "Real-time speed measurement"
+        ],
+        "publisher": {
+          "@id": "https://axvoi.com/#organization"
+        },
+        "isAccessibleForFree": true,
+        "inLanguage": "en-US"
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://axvoi.com/#softwareapplication",
+        "name": "AXVOI SpeedTest",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Web Browser",
+        "url": "https://axvoi.com",
+        "description": "AXVOI SpeedTest is a free browser-based speed test tool that measures internet download speed, upload speed, ping, jitter, latency, and network stability.",
+        "softwareVersion": "1.0.0",
+        "author": {
+          "@id": "https://axvoi.com/#organization"
+        },
+        "publisher": {
+          "@id": "https://axvoi.com/#organization"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "isAccessibleForFree": true
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://axvoi.com/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is AXVOI SpeedTest?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "AXVOI SpeedTest is a free online internet speed test tool that measures download speed, upload speed, ping, jitter, latency, and network stability."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What does download speed mean?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Download speed shows how quickly your internet connection receives data from the internet. It affects streaming, browsing, downloads, and website loading."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What does upload speed mean?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Upload speed shows how quickly your internet connection sends data. It is important for video calls, cloud backups, sending files, and live streaming."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is ping in a speed test?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ping measures the response time between your device and the test server. Lower ping usually means a faster and more responsive connection."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is jitter?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Jitter measures how much your ping changes during the test. Lower jitter means a more stable connection for gaming, video calls, and live communication."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is AXVOI SpeedTest free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, AXVOI SpeedTest is free to use and works directly in a modern web browser."
+            }
+          }
+        ]
+      }
+    ]
   };
 
   return (
@@ -112,14 +232,12 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <GoogleAnalytics />
+
+        <GoogleAnalyticsWrapper />
+
         <div className="flex min-h-screen flex-col">
           <Header />
-
-          <main className="flex-1">
-            {children}
-          </main>
-
+          <main className="flex-1">{children}</main>
           <Footer />
         </div>
       </body>
