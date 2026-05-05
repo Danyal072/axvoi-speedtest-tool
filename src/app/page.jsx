@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   motion,
   AnimatePresence,
@@ -39,48 +45,53 @@ const PHASES = {
   "-1": {
     label: "Ready",
     title: "Internet Speed Test",
-    description: "Check download, upload, ping and jitter in real time.",
+    description: "Check your download, upload, ping and jitter in real time.",
     color: COLORS.idle,
+    glow: "rgba(107, 114, 128, 0.35)",
   },
   "0": {
     label: "Connecting",
-    title: "Preparing test engine",
+    title: "Preparing Test",
     description: "Connecting to the speed test server.",
     color: COLORS.idle,
+    glow: "rgba(107, 114, 128, 0.35)",
   },
   "1": {
     label: "Download",
-    title: "Testing download speed",
+    title: "Testing Download",
     description: "Measuring how fast your connection receives data.",
     color: COLORS.dl,
+    glow: "rgba(21, 226, 139, 0.45)",
   },
   "2": {
     label: "Latency",
-    title: "Checking latency",
+    title: "Checking Latency",
     description: "Measuring ping and jitter stability.",
     color: COLORS.ping,
+    glow: "rgba(249, 115, 22, 0.45)",
   },
   "3": {
     label: "Upload",
-    title: "Testing upload speed",
+    title: "Testing Upload",
     description: "Measuring how fast your connection sends data.",
     color: COLORS.ul,
+    glow: "rgba(56, 189, 248, 0.45)",
   },
   "4": {
     label: "Complete",
-    title: "Test completed",
+    title: "Test Completed",
     description: "Your latest network results are ready.",
     color: COLORS.done,
+    glow: "rgba(21, 226, 139, 0.45)",
   },
   "5": {
     label: "Stopped",
-    title: "Test stopped",
+    title: "Test Stopped",
     description: "You can start a new test anytime.",
     color: COLORS.stopped,
+    glow: "rgba(239, 68, 68, 0.45)",
   },
 };
-
-const CIRC = 2 * Math.PI * 44;
 
 /* ─── Helpers ─────────────────────────────────────────────── */
 
@@ -96,6 +107,15 @@ function safeNumber(value) {
   const n = parseFloat(value);
   return Number.isFinite(n) ? n : 0;
 }
+
+const polarToCartesian = (cx, cy, r, angleInDegrees) => {
+  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180;
+
+  return {
+    x: cx + r * Math.cos(angleInRadians),
+    y: cy + r * Math.sin(angleInRadians),
+  };
+};
 
 /* ─── Animated Number ─────────────────────────────────────── */
 
@@ -117,11 +137,11 @@ function AmbientBg({ color }) {
   return (
     <div className="fixed inset-0 z-0 overflow-hidden bg-[#030813] pointer-events-none">
       <motion.div
-        className="absolute -left-[12%] -top-[35%] h-[70vw] w-[70vw] rounded-full blur-[150px]"
+        className="absolute -left-[14%] -top-[36%] h-[66vw] w-[66vw] rounded-full blur-[150px]"
         animate={{
           backgroundColor: color,
-          scale: [1, 1.08, 1],
-          opacity: [0.08, 0.16, 0.08],
+          scale: [1, 1.06, 1],
+          opacity: [0.06, 0.13, 0.06],
         }}
         transition={{
           duration: 8,
@@ -131,11 +151,11 @@ function AmbientBg({ color }) {
       />
 
       <motion.div
-        className="absolute -bottom-[35%] -right-[12%] h-[62vw] w-[62vw] rounded-full blur-[145px]"
+        className="absolute -bottom-[36%] -right-[14%] h-[58vw] w-[58vw] rounded-full blur-[145px]"
         style={{ backgroundColor: "#15E28B" }}
         animate={{
-          scale: [1.05, 1, 1.05],
-          opacity: [0.05, 0.11, 0.05],
+          scale: [1.04, 1, 1.04],
+          opacity: [0.04, 0.09, 0.04],
         }}
         transition={{
           duration: 11,
@@ -145,9 +165,9 @@ function AmbientBg({ color }) {
         }}
       />
 
-      <div className="absolute inset-0 bg-[radial-gradient(rgba(21,226,139,0.06)_1px,transparent_1px)] bg-[size:44px_44px]" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:120px_120px]" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#030813]/20 via-[#030813]/70 to-[#030813]" />
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(21,226,139,0.045)_1px,transparent_1px)] bg-[size:44px_44px]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.018)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.018)_1px,transparent_1px)] bg-[size:120px_120px]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#030813]/20 via-[#030813]/76 to-[#030813]" />
     </div>
   );
 }
@@ -161,7 +181,8 @@ function LocalhostWarning() {
         <AlertTriangle size={17} className="mt-0.5 shrink-0 text-orange-300" />
 
         <p className="text-xs font-medium leading-5 text-orange-100/85">
-          Localhost test detected. Results may show local server speed, not real ISP speed.
+          Localhost test detected. Results may show local server speed, not real
+          ISP speed.
         </p>
       </div>
     </div>
@@ -209,12 +230,12 @@ function StatusBadge({ loaded, testState, color, engineError }) {
           style={{
             background: `${color}0D`,
             border: `1px solid ${color}35`,
-            boxShadow: `0 0 22px ${color}18`,
+            boxShadow: `0 0 18px ${color}14`,
           }}
         >
           <motion.span
             className="block h-2.5 w-2.5 rounded-full"
-            animate={{ scale: [1, 1.45, 1], opacity: [0.75, 1, 0.75] }}
+            animate={{ scale: [1, 1.4, 1], opacity: [0.75, 1, 0.75] }}
             transition={{ duration: 1.6, repeat: Infinity }}
             style={{
               backgroundColor: color,
@@ -231,166 +252,259 @@ function StatusBadge({ loaded, testState, color, engineError }) {
   );
 }
 
-/* ─── Dial Visualizer ─────────────────────────────────────── */
+/* ─── Speed Dial ──────────────────────────────────────────── */
 
 function SpeedDial({
-  speed,
-  dialMax,
-  phase,
-  isRunning,
+  speed = 0,
+  dialMax = 100,
+  phase = -1,
+  isRunning = false,
   onStart,
   onStop,
-  disabled,
+  disabled = false,
 }) {
   const info = PHASES[phase] ?? PHASES["-1"];
   const color = info.color;
   const showStart = !isRunning && (phase === -1 || phase === 4 || phase === 5);
-  const pct = Math.min((speed || 0) / dialMax, 1);
+
+  const size = 320;
+  const center = size / 2;
+  const radius = 122;
+  const tickRadiusInner = 135;
+  const tickRadiusOuter = 143;
+  const textRadius = 162;
+
+  const angleStart = -120;
+  const angleEnd = 120;
+  const angleSweep = angleEnd - angleStart;
+
+  const trackCircumference = 2 * Math.PI * radius;
+  const trackArcLength = (angleSweep / 360) * trackCircumference;
+
+  const springConfig = { stiffness: 42, damping: 14, mass: 0.8 };
+  const speedSpring = useSpring(0, springConfig);
+
+  useEffect(() => {
+    speedSpring.set(Math.min(speed, dialMax));
+  }, [speed, dialMax, speedSpring]);
+
+  const needleRotation = useTransform(
+    speedSpring,
+    [0, dialMax],
+    [angleStart, angleEnd]
+  );
+
+  const trackDashoffset = useTransform(
+    speedSpring,
+    [0, dialMax],
+    [trackArcLength, 0]
+  );
+
+  const [displayValue, setDisplayValue] = useState("0.0");
+
+  useEffect(() => {
+    const unsubscribe = speedSpring.on("change", (v) => {
+      setDisplayValue(v < 10 && v > 0 ? v.toFixed(2) : v.toFixed(1));
+    });
+
+    return unsubscribe;
+  }, [speedSpring]);
+
+  const ticks = Array.from({ length: 25 }).map((_, i) => {
+    const isMajor = i % 6 === 0;
+    const value = Math.round((i / 24) * dialMax);
+    const angle = angleStart + (i / 24) * angleSweep;
+
+    const p1 = polarToCartesian(center, center, tickRadiusInner, angle);
+    const p2 = polarToCartesian(
+      center,
+      center,
+      isMajor ? tickRadiusOuter + 4 : tickRadiusOuter,
+      angle
+    );
+
+    const textPos = polarToCartesian(center, center, textRadius, angle);
+
+    return {
+      id: i,
+      isMajor,
+      value,
+      p1,
+      p2,
+      textPos,
+    };
+  });
 
   return (
-    <div className="relative mx-auto flex h-[310px] w-[310px] items-center justify-center sm:h-[370px] sm:w-[370px] lg:h-[420px] lg:w-[420px]">
-      <AnimatePresence>
-        {isRunning && (
-          <motion.div
-            key="pulse"
-            className="absolute inset-8 rounded-full pointer-events-none"
-            style={{ border: `1px solid ${color}` }}
-            initial={{ scale: 1, opacity: 0.35 }}
-            animate={{ scale: 1.55, opacity: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{
-              duration: 2.1,
-              repeat: Infinity,
-              ease: "easeOut",
-            }}
-          />
-        )}
-      </AnimatePresence>
-
+    <div className="relative mx-auto flex h-[330px] w-[330px] items-center justify-center font-sans select-none sm:h-[380px] sm:w-[380px]">
       <div
-        className="absolute inset-0 rounded-full opacity-20 blur-3xl"
+        className="absolute inset-6 rounded-full opacity-10 blur-3xl transition-colors duration-700 pointer-events-none"
         style={{ backgroundColor: color }}
       />
 
       <svg
-        className="absolute inset-0 h-full w-full -rotate-90"
-        viewBox="0 0 100 100"
+        className="absolute inset-0 h-full w-full pointer-events-none"
+        viewBox={`0 0 ${size} ${size}`}
         style={{ overflow: "visible" }}
       >
         <defs>
-          <linearGradient id="speedDialGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor={color} stopOpacity="0.15" />
-            <stop offset="55%" stopColor={color} stopOpacity="0.75" />
-            <stop offset="100%" stopColor={color} stopOpacity="1" />
-          </linearGradient>
-
-          <filter id="speedDialGlow">
-            <feGaussianBlur stdDeviation="1.7" result="blur" />
+          <filter id="neonGlow" x="-25%" y="-25%" width="150%" height="150%">
+            <feGaussianBlur stdDeviation="4.5" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
+
+          <linearGradient id="needleGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+            <stop offset="78%" stopColor={color} />
+            <stop offset="100%" stopColor="#ffffff" />
+          </linearGradient>
         </defs>
 
+        <g className="opacity-55">
+          {ticks.map((tick) => (
+            <React.Fragment key={`tick-${tick.id}`}>
+              <line
+                x1={tick.p1.x}
+                y1={tick.p1.y}
+                x2={tick.p2.x}
+                y2={tick.p2.y}
+                stroke={
+                  tick.isMajor
+                    ? "rgba(255,255,255,0.7)"
+                    : "rgba(255,255,255,0.25)"
+                }
+                strokeWidth={tick.isMajor ? 2 : 1}
+                strokeLinecap="round"
+              />
+
+              {tick.isMajor && (
+                <text
+                  x={tick.textPos.x}
+                  y={tick.textPos.y}
+                  fill="rgba(255,255,255,0.55)"
+                  fontSize="9.5"
+                  fontWeight="700"
+                  textAnchor="middle"
+                  alignmentBaseline="middle"
+                  className="font-mono tracking-tighter"
+                >
+                  {tick.value}
+                </text>
+              )}
+            </React.Fragment>
+          ))}
+        </g>
+
         <circle
-          cx="50"
-          cy="50"
-          r="48"
+          cx={center}
+          cy={center}
+          r={radius}
           fill="none"
-          stroke="rgba(255,255,255,0.035)"
-          strokeWidth="0.5"
+          stroke="rgba(255,255,255,0.055)"
+          strokeWidth="11"
+          strokeLinecap="round"
+          strokeDasharray={`${trackArcLength} ${trackCircumference}`}
+          transform={`rotate(${angleStart - 90} ${center} ${center})`}
+        />
+
+        <circle
+          cx={center}
+          cy={center}
+          r={radius - 8}
+          fill="none"
+          stroke="rgba(255,255,255,0.025)"
+          strokeWidth="1"
+          strokeDasharray={`${trackArcLength - 15} ${trackCircumference}`}
+          transform={`rotate(${angleStart - 90} ${center} ${center})`}
         />
 
         <motion.circle
-          cx="50"
-          cy="50"
-          r="44"
+          cx={center}
+          cy={center}
+          r={radius}
           fill="none"
           stroke={color}
-          strokeWidth="0.8"
-          strokeDasharray="2 8"
-          opacity={0.24}
-          animate={{ rotate: isRunning ? 360 : 0 }}
-          transition={{
-            duration: isRunning ? 5 : 40,
-            repeat: Infinity,
-            ease: "linear",
+          strokeWidth="11"
+          strokeLinecap="round"
+          strokeDasharray={`${trackArcLength} ${trackCircumference}`}
+          style={{ strokeDashoffset: trackDashoffset }}
+          transform={`rotate(${angleStart - 90} ${center} ${center})`}
+          filter="url(#neonGlow)"
+          className="transition-colors duration-500"
+        />
+
+        <motion.g
+          style={{
+            rotate: needleRotation,
+            transformOrigin: `${center}px ${center}px`,
           }}
-          style={{ transformOrigin: "50px 50px" }}
-        />
+        >
+          <polygon
+            points={`${center - 3.5},${center + 13} ${center + 3.5},${
+              center + 13
+            } ${center},${center - radius + 18}`}
+            fill="url(#needleGradient)"
+            className="transition-colors duration-500"
+          />
 
-        <circle
-          cx="50"
-          cy="50"
-          r="44"
-          fill="none"
-          stroke="rgba(255,255,255,0.06)"
-          strokeWidth="5"
-          strokeLinecap="round"
-        />
+          <circle
+            cx={center}
+            cy={center - radius + 16}
+            r="2.8"
+            fill="#ffffff"
+            filter="url(#neonGlow)"
+          />
 
-        <motion.circle
-          cx="50"
-          cy="50"
-          r="44"
-          fill="none"
-          stroke="url(#speedDialGradient)"
-          strokeWidth="5"
-          strokeLinecap="round"
-          strokeDasharray={CIRC}
-          animate={{ strokeDashoffset: CIRC - CIRC * pct }}
-          initial={{ strokeDashoffset: CIRC }}
-          transition={{ type: "spring", bounce: 0, duration: 0.45 }}
-          filter="url(#speedDialGlow)"
-        />
+          <circle cx={center} cy={center} r="17" fill="#0b1020" />
+          <circle
+            cx={center}
+            cy={center}
+            r="17"
+            fill="rgba(255,255,255,0.08)"
+          />
+        </motion.g>
       </svg>
-
-      <div className="absolute top-6 rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-white/40 backdrop-blur-xl">
-        Scale 0–{dialMax} Mbps
-      </div>
 
       <motion.button
         type="button"
         disabled={disabled}
         onClick={isRunning ? onStop : onStart}
-        className="relative z-10 flex h-[210px] w-[210px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full disabled:cursor-not-allowed disabled:opacity-50 sm:h-[250px] sm:w-[250px] lg:h-[280px] lg:w-[280px]"
+        className="relative z-10 flex h-[170px] w-[170px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-full border border-white/10 backdrop-blur-xl disabled:cursor-not-allowed disabled:opacity-50 sm:h-[190px] sm:w-[190px]"
         style={{
           background:
-            "radial-gradient(circle at 38% 28%, rgba(255,255,255,0.11) 0%, rgba(255,255,255,0.035) 52%, rgba(0,0,0,0.26) 100%)",
-          border: `1px solid ${
-            isRunning ? color + "66" : "rgba(255,255,255,0.1)"
+            "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08) 0%, rgba(6,10,22,0.62) 65%, rgba(0,0,0,0.9) 100%)",
+          boxShadow: `0 18px 38px rgba(0,0,0,0.46), inset 0 1px 0 rgba(255,255,255,0.17), 0 0 24px ${
+            isRunning ? info.glow : "rgba(0,0,0,0)"
           }`,
-          boxShadow: isRunning
-            ? `0 0 95px ${color}2B, 0 0 38px ${color}18, inset 0 1px 0 rgba(255,255,255,0.1)`
-            : "0 0 55px rgba(21,226,139,0.08), inset 0 1px 0 rgba(255,255,255,0.08)",
         }}
-        whileHover={disabled ? {} : { scale: 1.03 }}
-        whileTap={disabled ? {} : { scale: 0.965 }}
-        transition={{ type: "spring", stiffness: 420, damping: 24 }}
+        whileHover={disabled ? {} : { scale: 1.02 }}
+        whileTap={disabled ? {} : { scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
       >
-        <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/[0.08] to-transparent pointer-events-none" />
-
         <AnimatePresence mode="wait">
           {showStart ? (
             <motion.div
               key="start"
-              className="flex flex-col items-center gap-4"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
+              className="flex flex-col items-center gap-3"
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.92 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="flex h-17 w-17 items-center justify-center rounded-full border border-[#15E28B]/35 bg-[#15E28B]/13 shadow-[0_0_35px_rgba(21,226,139,0.28)]">
-                {phase === 4 ? (
-                  <RotateCcw size={28} className="text-[#15E28B]" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-white/5 shadow-inner">
+                {phase === 4 || phase === 5 ? (
+                  <RotateCcw size={25} className="text-white/80" />
                 ) : (
-                  <Play size={30} className="ml-1 text-[#15E28B]" />
+                  <Play size={25} className="ml-1 text-white/80" />
                 )}
               </div>
 
               <div className="text-center">
-                <span className="block text-[13px] font-black uppercase tracking-[0.25em] text-white/70">
-                  {phase === 4 ? "Run Again" : "Start Test"}
+                <span className="block text-xs font-black uppercase tracking-[0.2em] text-white/80">
+                  {phase === 4 || phase === 5 ? "Run Again" : "Start Test"}
                 </span>
-                <span className="mt-1 block text-[10px] font-semibold uppercase tracking-[0.2em] text-white/28">
+
+                <span className="mt-1 block text-[10px] font-medium uppercase tracking-widest text-white/38">
                   Tap to begin
                 </span>
               </div>
@@ -399,40 +513,36 @@ function SpeedDial({
             <motion.div
               key="speed"
               className="flex flex-col items-center px-4 text-center"
-              initial={{ opacity: 0, scale: 0.92 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.92 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
             >
-              <motion.span
-                className="mb-2 text-[10px] font-black uppercase tracking-[0.32em]"
+              <motion.div
+                className="mb-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.23em]"
                 style={{ color }}
               >
+                {phase !== 0 && <Activity size={12} />}
                 {info.label}
-              </motion.span>
+              </motion.div>
 
-              <span className="text-6xl font-black leading-none tracking-tighter text-white tabular-nums sm:text-7xl lg:text-8xl">
-                <AnimatedNumber
-                  value={speed}
-                  fmt={(v) =>
-                    v < 10 && v > 0 ? v.toFixed(2) : v.toFixed(1)
-                  }
-                />
-              </span>
+              <div className="text-4xl font-black leading-none tracking-tighter text-white tabular-nums drop-shadow-md sm:text-5xl">
+                {displayValue}
+              </div>
 
-              <span className="mt-2 text-[11px] font-bold uppercase tracking-widest text-white/38">
+              <span className="mt-1 text-[10px] font-bold uppercase tracking-widest text-white/38">
                 Mbps
               </span>
 
               {isRunning && (
                 <motion.div
-                  className="absolute bottom-8 flex items-center gap-1.5 text-[9px] uppercase tracking-widest text-white/30"
+                  className="absolute bottom-5 flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-white/32 transition-colors hover:text-white/60"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
+                  transition={{ delay: 0.45 }}
                 >
                   <Square size={8} className="fill-current" />
-                  Stop Test
+                  Stop
                 </motion.div>
               )}
             </motion.div>
@@ -451,9 +561,9 @@ function MiniMetric({ label, value, unit, icon: Icon, active, color }) {
       className="relative overflow-hidden rounded-2xl border px-4 py-3 backdrop-blur-xl"
       style={{
         background: active
-          ? `linear-gradient(135deg, ${color}18, rgba(255,255,255,0.04))`
-          : "rgba(255,255,255,0.045)",
-        borderColor: active ? `${color}55` : "rgba(255,255,255,0.1)",
+          ? `linear-gradient(135deg, ${color}16, rgba(255,255,255,0.035))`
+          : "rgba(255,255,255,0.035)",
+        borderColor: active ? `${color}50` : "rgba(255,255,255,0.09)",
       }}
       whileHover={{ y: -2 }}
     >
@@ -469,11 +579,14 @@ function MiniMetric({ label, value, unit, icon: Icon, active, color }) {
           <div
             className="flex h-9 w-9 items-center justify-center rounded-xl border"
             style={{
-              background: active ? `${color}1F` : "rgba(255,255,255,0.06)",
+              background: active ? `${color}1F` : "rgba(255,255,255,0.055)",
               borderColor: active ? `${color}40` : "rgba(255,255,255,0.1)",
             }}
           >
-            <Icon size={16} style={{ color: active ? color : "rgba(255,255,255,0.45)" }} />
+            <Icon
+              size={16}
+              style={{ color: active ? color : "rgba(255,255,255,0.45)" }}
+            />
           </div>
 
           <div>
@@ -490,7 +603,9 @@ function MiniMetric({ label, value, unit, icon: Icon, active, color }) {
               >
                 <AnimatedNumber
                   value={value}
-                  fmt={(v) => (v === 0 ? "—" : v < 10 ? v.toFixed(2) : v.toFixed(1))}
+                  fmt={(v) =>
+                    v === 0 ? "—" : v < 10 ? v.toFixed(2) : v.toFixed(1)
+                  }
                 />
               </span>
 
@@ -524,10 +639,11 @@ function StepBar({ testState }) {
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-2 rounded-2xl border border-white/10 bg-white/[0.035] p-2 backdrop-blur-xl">
+    <div className="grid grid-cols-3 gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-2 backdrop-blur-xl">
       {steps.map((step) => {
         const Icon = step.icon;
         const active = testState === step.id;
+
         const done =
           testState === 4 ||
           (step.id === 2 && [1, 3].includes(testState)) ||
@@ -558,18 +674,18 @@ function StepBar({ testState }) {
 function ResultBox({ testState, dlVal, ulVal, pingVal, isLocalhost }) {
   if (testState !== 4) return null;
 
-  let label = "Good connection";
-  let description = "Your network looks stable for browsing, streaming and daily work.";
+  let label = "Good Connection";
+  let description = "Your network looks stable for browsing and daily work.";
 
   if (isLocalhost) {
-    label = "Localhost result";
+    label = "Localhost Result";
     description =
       "This is not your real ISP speed because the backend is running locally.";
   } else if (dlVal >= 200 && ulVal >= 50 && pingVal <= 30) {
-    label = "Excellent connection";
-    description = "Great for 4K streaming, gaming, video meetings and cloud work.";
+    label = "Excellent Connection";
+    description = "Great for 4K streaming, gaming, meetings and cloud work.";
   } else if (dlVal < 25 || pingVal > 100) {
-    label = "Needs attention";
+    label = "Needs Attention";
     description = "Your connection may feel slow for calls, uploads or gaming.";
   }
 
@@ -577,7 +693,7 @@ function ResultBox({ testState, dlVal, ulVal, pingVal, isLocalhost }) {
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-[#15E28B]/20 bg-[#15E28B]/8 p-4 backdrop-blur-xl"
+      className="rounded-2xl border border-[#15E28B]/20 bg-[#15E28B]/[0.07] p-4 backdrop-blur-xl"
     >
       <div className="flex items-start gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#15E28B]/25 bg-[#15E28B]/10">
@@ -586,10 +702,22 @@ function ResultBox({ testState, dlVal, ulVal, pingVal, isLocalhost }) {
 
         <div>
           <h3 className="text-sm font-black text-white">{label}</h3>
-          <p className="mt-1 text-xs leading-5 text-white/45">{description}</p>
+          <p className="mt-1 text-xs leading-5 text-white/45">
+            {description}
+          </p>
         </div>
       </div>
     </motion.div>
+  );
+}
+
+/* ─── Info Card ───────────────────────────────────────────── */
+
+function InfoCard({ children }) {
+  return (
+    <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.028] p-4 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-5">
+      {children}
+    </div>
   );
 }
 
@@ -606,7 +734,6 @@ export default function SpeedTestPage() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // eslint-disable-next-line
       setIsLocalhost(
         ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)
       );
@@ -647,7 +774,9 @@ export default function SpeedTestPage() {
 
   const pushHistory = useCallback((entry) => {
     try {
-      const prev = JSON.parse(localStorage.getItem("axvoi_speedtest_v3") || "[]");
+      const prev = JSON.parse(
+        localStorage.getItem("axvoi_speedtest_v3") || "[]"
+      );
 
       localStorage.setItem(
         "axvoi_speedtest_v3",
@@ -747,23 +876,17 @@ export default function SpeedTestPage() {
   const dlVal = safeNumber(liveData?.dlStatus);
   const ulVal = safeNumber(liveData?.ulStatus);
 
-  const dialMax = useMemo(() => getDialMax(Math.max(speed, dlVal, ulVal)), [
-    speed,
-    dlVal,
-    ulVal,
-  ]);
+  const dialMax = useMemo(
+    () => getDialMax(Math.max(speed, dlVal, ulVal)),
+    [speed, dlVal, ulVal]
+  );
 
   return (
     <main className="relative w-full overflow-x-hidden bg-[#030813] text-white selection:bg-[#15E28B]/20">
       <AmbientBg color={color} />
 
-      {/* 
-        Full screen viewport area:
-        Header remains above from RootLayout.
-        Footer stays below because this section uses viewport height.
-      */}
-      <section className="relative z-10 flex min-h-[calc(100svh-86px)] w-full items-center px-4 py-5 sm:px-6 lg:px-8">
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-5 xl:grid-cols-[360px_1fr_360px]">
+      <section className="relative z-10 flex min-h-[calc(100svh-86px)] w-full items-center px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-5 xl:grid-cols-[340px_1fr_340px]">
           {/* Left Panel */}
           <motion.aside
             initial={{ opacity: 0, x: -18 }}
@@ -771,25 +894,26 @@ export default function SpeedTestPage() {
             transition={{ duration: 0.35 }}
             className="order-2 space-y-4 xl:order-1"
           >
-            <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/25 backdrop-blur-2xl">
+            <InfoCard>
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#15E28B]/30 bg-[#15E28B]/10 shadow-[0_0_25px_rgba(21,226,139,0.18)]">
-                  <Gauge size={22} className="text-[#15E28B]" />
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[#15E28B]/25 bg-[#15E28B]/10 shadow-[0_0_20px_rgba(21,226,139,0.13)]">
+                  <Gauge size={21} className="text-[#15E28B]" />
                 </div>
 
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#15E28B]">
                     AXVOI SpeedTest
                   </p>
-                  <h2 className="mt-1 text-xl font-black text-white">
-                    Professional Diagnostics
+
+                  <h2 className="mt-1 text-lg font-black text-white">
+                    Network Diagnostics
                   </h2>
                 </div>
               </div>
 
               <p className="mt-4 text-sm leading-6 text-white/50">
-                Real-time LibreSpeed powered internet diagnostics with clean
-                visual feedback for download, upload, ping and jitter.
+                Measure your internet speed, ping, upload and connection
+                stability in real time.
               </p>
 
               <div className="mt-5 grid gap-3">
@@ -803,16 +927,16 @@ export default function SpeedTestPage() {
                 <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/15 px-4 py-3">
                   <Signal size={16} className="text-sky-400" />
                   <span className="text-xs font-semibold text-white/55">
-                    Dynamic dial scale with +50 margin
+                    Adaptive scale for accurate reading
                   </span>
                 </div>
               </div>
-            </div>
+            </InfoCard>
 
             {isLocalhost && <LocalhostWarning />}
           </motion.aside>
 
-          {/* Center Dial */}
+          {/* Center */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -833,16 +957,16 @@ export default function SpeedTestPage() {
               transition={{ duration: 0.25 }}
               className="mt-4"
             >
-              <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
+              <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
                 {phaseInfo.title}
               </h1>
 
-              <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-white/52 sm:text-base">
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-white/52 sm:text-base">
                 {phaseInfo.description}
               </p>
             </motion.div>
 
-            <div className="mt-3">
+            <div className="mt-2">
               <SpeedDial
                 speed={speed}
                 dialMax={dialMax}
@@ -862,17 +986,18 @@ export default function SpeedTestPage() {
             transition={{ duration: 0.35 }}
             className="order-3 space-y-4"
           >
-            <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/25 backdrop-blur-2xl">
+            <InfoCard>
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-sky-400/25 bg-sky-400/10 shadow-[0_0_25px_rgba(56,189,248,0.14)]">
-                  <Wifi size={22} className="text-sky-400" />
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-sky-400/25 bg-sky-400/10 shadow-[0_0_20px_rgba(56,189,248,0.12)]">
+                  <Wifi size={21} className="text-sky-400" />
                 </div>
 
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/35">
                     Active Status
                   </p>
-                  <h2 className="mt-1 text-2xl font-black" style={{ color }}>
+
+                  <h2 className="mt-1 text-xl font-black" style={{ color }}>
                     {phaseInfo.label}
                   </h2>
                 </div>
@@ -889,7 +1014,7 @@ export default function SpeedTestPage() {
               <div className="mt-5">
                 <StepBar testState={testState} />
               </div>
-            </div>
+            </InfoCard>
 
             <ResultBox
               testState={testState}
@@ -900,7 +1025,7 @@ export default function SpeedTestPage() {
             />
           </motion.aside>
 
-          {/* Bottom Metrics - Full Width */}
+          {/* Metrics */}
           <motion.div
             className="order-4 grid w-full gap-3 sm:grid-cols-2 xl:col-span-3 xl:grid-cols-4"
             initial={{ opacity: 0, y: 16 }}
