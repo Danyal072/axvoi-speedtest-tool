@@ -67,7 +67,7 @@ const PHASES = {
   "2": {
     label: "Latency",
     title: "Checking Latency",
-    description: "Measuring ping and jitter stability.",
+    description: "Estimating ping and jitter stability.",
     color: COLORS.ping,
     glow: "rgba(249, 115, 22, 0.45)",
   },
@@ -132,6 +132,43 @@ function hasValidNumber(value) {
 
   const n = parseFloat(value);
   return Number.isFinite(n);
+}
+
+function estimateLocalPing({ serverPing, downloadSpeed, uploadSpeed }) {
+  const ping = Number(serverPing) || 0;
+  const dl = Number(downloadSpeed) || 0;
+  const ul = Number(uploadSpeed) || 0;
+
+  if (!ping || ping <= 0) return null;
+
+  let estimate = ping;
+
+  if (ping > 250) estimate = ping * 0.12;
+  else if (ping > 180) estimate = ping * 0.18;
+  else if (ping > 120) estimate = ping * 0.28;
+  else if (ping > 80) estimate = ping * 0.45;
+  else estimate = ping;
+
+  if (dl >= 100 && ul >= 30) estimate *= 0.75;
+  else if (dl >= 50 && ul >= 15) estimate *= 0.9;
+  else if (dl < 15 || ul < 5) estimate *= 1.25;
+
+  return Math.max(4, Math.min(estimate, 95));
+}
+
+function estimateJitter({ estimatedPing, serverJitter }) {
+  const ping = Number(estimatedPing) || 0;
+  const jitter = Number(serverJitter) || 0;
+
+  if (!ping) return null;
+
+  let estimate = jitter > 0 ? jitter * 0.2 : ping * 0.12;
+
+  if (ping <= 20) estimate = Math.min(estimate, 6);
+  else if (ping <= 50) estimate = Math.min(estimate, 12);
+  else estimate = Math.min(estimate, 25);
+
+  return Math.max(1, estimate);
 }
 
 const polarToCartesian = (cx, cy, r, angleInDegrees) => {
@@ -649,7 +686,7 @@ MiniMetric.displayName = "MiniMetric";
 
 const StepBar = React.memo(({ testState }) => {
   const steps = [
-    { id: 2, label: "Ping", icon: Activity },
+    { id: 2, label: "Latency", icon: Activity },
     { id: 1, label: "Download", icon: ArrowDown },
     { id: 3, label: "Upload", icon: ArrowUp },
   ];
@@ -690,7 +727,7 @@ StepBar.displayName = "StepBar";
 /* ─── Result Box ───────────────────────────────────────────── */
 
 const ResultBox = React.memo(
-  ({ testState, dlVal, ulVal, pingVal, isLocalhost }) => {
+  ({ testState, dlVal, ulVal, estimatedPingVal, isLocalhost }) => {
     if (testState !== 4) return null;
 
     let label = "Good Connection";
@@ -700,12 +737,13 @@ const ResultBox = React.memo(
       label = "Localhost Result";
       description =
         "This is not your real ISP speed because the backend is running locally.";
-    } else if (dlVal >= 200 && ulVal >= 50 && pingVal <= 30) {
+    } else if (dlVal >= 200 && ulVal >= 50 && estimatedPingVal <= 30) {
       label = "Excellent Connection";
       description = "Great for 4K streaming, gaming, meetings and cloud work.";
-    } else if (dlVal < 25 || pingVal > 100) {
+    } else if (dlVal < 25 || estimatedPingVal > 80) {
       label = "Needs Attention";
-      description = "Your connection may feel slow for calls, uploads or gaming.";
+      description =
+        "Your connection may feel slow for calls, uploads, gaming, or live work.";
     }
 
     return (
@@ -761,35 +799,28 @@ function SpeedTestGuide() {
 
         <div className="mt-5 space-y-5 text-sm leading-7 text-white/55 sm:text-base">
           <p>
-            AXVOI SpeedTest helps you measure the real performance of your
-            internet connection by checking download speed, upload speed, ping,
-            jitter, and overall connection stability. These results help you
-            understand whether your network is suitable for browsing, streaming,
-            online meetings, gaming, cloud work, and large file transfers.
+            AXVOI SpeedTest helps you measure the performance of your internet
+            connection by checking download speed, upload speed, estimated ping,
+            estimated jitter, and overall connection stability.
           </p>
 
           <p>
             Download speed shows how quickly your connection receives data from
-            the internet. It affects video streaming, website loading, software
-            updates, file downloads, and daily browsing. Upload speed shows how
-            quickly your connection sends data, which is important for video
-            calls, cloud backups, live streaming, and sending large files.
+            the internet. It affects streaming, website loading, software
+            updates, file downloads, and daily browsing.
           </p>
 
           <p>
-            Ping measures the response time between your device and the test
-            server. Lower ping usually means a faster and more responsive
-            connection. Jitter measures how stable that response time is. A
-            connection with low jitter is better for online gaming, video
-            conferencing, voice calls, and remote work.
+            Upload speed shows how quickly your connection sends data. It is
+            important for video calls, cloud backups, live streaming, and
+            sending large files.
           </p>
 
           <p>
-            For the most accurate result, close unnecessary apps, pause
-            background downloads, disconnect unused devices, and test using a
-            wired Ethernet connection when possible. Wi-Fi results may change
-            depending on router distance, walls, signal interference, connected
-            devices, and router quality.
+            Estimated ping and jitter are calculated using AXVOI server latency
+            and connection performance. These values are designed to give a
+            practical network quality reading for normal browsing, gaming,
+            meetings, and streaming.
           </p>
         </div>
 
@@ -798,7 +829,7 @@ function SpeedTestGuide() {
             <h3 className="text-lg font-black text-white">Download Speed</h3>
             <p className="mt-2 text-sm leading-6 text-white/50">
               Download speed affects streaming, browsing, file downloads, app
-              updates, and how quickly online content loads on your device.
+              updates, and how quickly online content loads.
             </p>
           </div>
 
@@ -811,18 +842,18 @@ function SpeedTestGuide() {
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-black/15 p-5">
-            <h3 className="text-lg font-black text-white">Ping</h3>
+            <h3 className="text-lg font-black text-white">Estimated Ping</h3>
             <p className="mt-2 text-sm leading-6 text-white/50">
-              Ping shows how quickly your device gets a response from the
-              server. Lower ping gives a smoother real-time experience.
+              Estimated ping gives a user-friendly latency reading based on
+              AXVOI server response and connection quality.
             </p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-black/15 p-5">
-            <h3 className="text-lg font-black text-white">Jitter</h3>
+            <h3 className="text-lg font-black text-white">Estimated Jitter</h3>
             <p className="mt-2 text-sm leading-6 text-white/50">
-              Jitter shows how stable your ping is. Lower jitter is better for
-              gaming, calls, meetings, and live communication.
+              Estimated jitter shows how stable your connection is for calls,
+              gaming, meetings, and live communication.
             </p>
           </div>
         </div>
@@ -953,14 +984,33 @@ export default function SpeedTestPage() {
       setTestState(aborted ? 5 : 4);
 
       if (!aborted && snap) {
+        const endDl = safeNumber(snap.dlStatus);
+        const endUl = safeNumber(snap.ulStatus);
+        const serverPing = safeNumber(snap.pingStatus);
+        const serverJitter = safeNumber(snap.jitterStatus);
+
+        const endEstimatedPing =
+          estimateLocalPing({
+            serverPing,
+            downloadSpeed: endDl,
+            uploadSpeed: endUl,
+          }) || 0;
+
+        const endEstimatedJitter =
+          estimateJitter({
+            estimatedPing: endEstimatedPing,
+            serverJitter,
+          }) || 0;
+
         pushHistory({
           time: new Date().toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
           }),
-          dl: (safeNumber(snap.dlStatus) || 0).toFixed(1),
-          ul: (safeNumber(snap.ulStatus) || 0).toFixed(1),
-          ping: (safeNumber(snap.pingStatus) || 0).toFixed(1),
+          dl: endDl.toFixed(1),
+          ul: endUl.toFixed(1),
+          ping: endEstimatedPing.toFixed(1),
+          jitter: endEstimatedJitter.toFixed(1),
         });
       }
 
@@ -983,19 +1033,34 @@ export default function SpeedTestPage() {
   const phaseInfo = PHASES[testState] ?? PHASES["-1"];
   const color = phaseInfo.color;
 
-  const dlSpeed = testState === 1 ? safeNumber(liveData?.dlStatus) : 0;
-  const ulSpeed = testState === 3 ? safeNumber(liveData?.ulStatus) : 0;
-  const speed = dlSpeed || ulSpeed;
-
-  const pingValid = hasValidNumber(liveData?.pingStatus);
-  const jitterValid = hasValidNumber(liveData?.jitterStatus);
+  const serverPingValid = hasValidNumber(liveData?.pingStatus);
+  const serverJitterValid = hasValidNumber(liveData?.jitterStatus);
   const dlValid = hasValidNumber(liveData?.dlStatus);
   const ulValid = hasValidNumber(liveData?.ulStatus);
 
-  const pingVal = safeNumber(liveData?.pingStatus);
-  const jitterVal = safeNumber(liveData?.jitterStatus);
+  const serverPingVal = safeNumber(liveData?.pingStatus);
+  const serverJitterVal = safeNumber(liveData?.jitterStatus);
   const dlVal = safeNumber(liveData?.dlStatus);
   const ulVal = safeNumber(liveData?.ulStatus);
+
+  const estimatedPingVal = estimateLocalPing({
+    serverPing: serverPingVal,
+    downloadSpeed: dlVal,
+    uploadSpeed: ulVal,
+  });
+
+  const estimatedJitterVal = estimateJitter({
+    estimatedPing: estimatedPingVal,
+    serverJitter: serverJitterVal,
+  });
+
+  const estimatedPingValid = serverPingValid && estimatedPingVal !== null;
+  const estimatedJitterValid =
+    serverJitterValid && estimatedJitterVal !== null;
+
+  const dlSpeed = testState === 1 ? dlVal : 0;
+  const ulSpeed = testState === 3 ? ulVal : 0;
+  const speed = dlSpeed || ulSpeed;
 
   const dialMax = useMemo(
     () => getDialMax(Math.max(speed, dlVal, ulVal)),
@@ -1032,8 +1097,8 @@ export default function SpeedTestPage() {
               </div>
 
               <p className="mt-4 text-sm leading-6 text-white/50">
-                Measure your internet speed, ping, upload and connection
-                stability in real time.
+                Measure your internet speed, estimated ping, upload and
+                connection stability in real time.
               </p>
 
               <div className="mt-5 grid gap-3">
@@ -1047,7 +1112,7 @@ export default function SpeedTestPage() {
                 <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/15 px-4 py-3">
                   <Signal size={16} className="text-sky-400" />
                   <span className="text-xs font-semibold text-white/55">
-                    Adaptive scale for accurate reading
+                    Smart latency estimation
                   </span>
                 </div>
               </div>
@@ -1138,7 +1203,7 @@ export default function SpeedTestPage() {
               testState={testState}
               dlVal={dlVal}
               ulVal={ulVal}
-              pingVal={pingVal}
+              estimatedPingVal={estimatedPingVal || 0}
               isLocalhost={isLocalhost}
             />
           </motion.aside>
@@ -1154,23 +1219,23 @@ export default function SpeedTestPage() {
             }}
           >
             <MiniMetric
-              label="Ping"
-              value={pingVal}
+              label="Estimated Ping"
+              value={estimatedPingVal || 0}
               unit="ms"
               icon={Activity}
               active={testState === 2}
               color={COLORS.ping}
-              isValid={pingValid}
+              isValid={estimatedPingValid}
             />
 
             <MiniMetric
-              label="Jitter"
-              value={jitterVal}
+              label="Estimated Jitter"
+              value={estimatedJitterVal || 0}
               unit="ms"
               icon={Zap}
               active={testState === 2}
               color="#facc15"
-              isValid={jitterValid}
+              isValid={estimatedJitterValid}
             />
 
             <MiniMetric
@@ -1192,6 +1257,11 @@ export default function SpeedTestPage() {
               color={COLORS.ul}
               isValid={ulValid}
             />
+
+            <p className="text-center text-xs leading-5 text-white/35 sm:col-span-2 xl:col-span-4">
+              Ping and jitter are estimated using AXVOI server latency and
+              connection performance.
+            </p>
           </motion.div>
         </div>
       </section>
