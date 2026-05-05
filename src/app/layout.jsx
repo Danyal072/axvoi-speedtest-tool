@@ -3,6 +3,7 @@ import "./globals.css";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -31,7 +32,7 @@ export const metadata = {
   ],
   authors: [{ name: "AXVOI" }],
   openGraph: {
-    title: "AXVOI SpeedTest — Test Your Internet Speed",
+    title: "AXVOI SpeedTest - Test Your Internet Speed",
     description:
       "Test your internet speed instantly — download, upload, ping and jitter.",
     url: "https://axvoi.com",
@@ -111,6 +112,7 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <GoogleAnalytics />
         <div className="flex min-h-screen flex-col">
           <Header />
 
