@@ -1,37 +1,24 @@
 "use client";
 
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-  useMemo,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  motion,
-  AnimatePresence,
-  useMotionValue,
-  useSpring,
-  useTransform,
-} from "framer-motion";
-import {
-  Play,
-  Square,
   Activity,
+  AlertTriangle,
   ArrowDown,
   ArrowUp,
-  Zap,
-  Wifi,
-  ShieldCheck,
-  RotateCcw,
-  Signal,
-  AlertTriangle,
   Gauge,
+  Play,
+  RotateCcw,
   Server,
+  ShieldCheck,
+  Signal,
+  Square,
+  Wifi,
+  Zap,
 } from "lucide-react";
 import SpeedTestFAQ from "@/components/SpeedTestFAQ";
-
-/* ─── Constants ─────────────────────────────────────────────── */
+import SpeedTestSeoArticle from "@/components/SpeedTestSeoArticle";
 
 const COLORS = {
   idle: "rgba(255,255,255,0.45)",
@@ -45,8 +32,9 @@ const COLORS = {
 const PHASES = {
   "-1": {
     label: "Ready",
-    title: "Internet Speed Test",
-    description: "Check your download, upload, ping and jitter in real time.",
+    title: "Internet Speed Test Online",
+    description:
+      "Check your WiFi speed, broadband speed, download speed, upload speed, ping, latency, jitter and network stability instantly.",
     color: COLORS.idle,
     glow: "rgba(107, 114, 128, 0.35)",
   },
@@ -81,28 +69,18 @@ const PHASES = {
   "4": {
     label: "Complete",
     title: "Test Completed",
-    description: "Your latest network results are ready.",
+    description: "Your latest internet speed test results are ready.",
     color: COLORS.done,
     glow: "rgba(21, 226, 139, 0.45)",
   },
   "5": {
     label: "Stopped",
     title: "Test Stopped",
-    description: "You can start a new test anytime.",
+    description: "You can start a new speed test anytime.",
     color: COLORS.stopped,
     glow: "rgba(239, 68, 68, 0.45)",
   },
 };
-
-/* ─── Helpers ─────────────────────────────────────────────── */
-
-function getDialMax(speed) {
-  const current = Number(speed) || 0;
-
-  if (current <= 50) return 100;
-
-  return Math.max(100, Math.ceil((current + 50) / 50) * 50);
-}
 
 function safeNumber(value, fallback = 0) {
   if (
@@ -171,63 +149,39 @@ function estimateJitter({ estimatedPing, serverJitter }) {
   return Math.max(1, estimate);
 }
 
-const polarToCartesian = (cx, cy, r, angleInDegrees) => {
-  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180;
-
-  return {
-    x: cx + r * Math.cos(angleInRadians),
-    y: cy + r * Math.sin(angleInRadians),
-  };
-};
-
-/* ─── Animated Number ─────────────────────────────────────── */
-
-function AnimatedNumber({ value, fmt, isValid = true }) {
-  const mv = useMotionValue(0);
-  const sv = useSpring(mv, { bounce: 0, duration: 650 });
-  const disp = useTransform(sv, fmt);
-
-  useEffect(() => {
-    if (isValid) {
-      mv.set(value || 0);
-    }
-  }, [value, mv, isValid]);
-
-  if (!isValid) {
-    return <span>—</span>;
-  }
-
-  return <motion.span>{disp}</motion.span>;
+function getDialMax(speed) {
+  const current = Number(speed) || 0;
+  if (current <= 50) return 100;
+  return Math.max(100, Math.ceil((current + 50) / 50) * 50);
 }
-
-/* ─── Background ───────────────────────────────────────────── */
 
 function AmbientBg({ color }) {
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#030813]">
       <div
-        className="blur-reduced animate-bg-scale-1 absolute -left-[14%] -top-[36%] h-[66vw] w-[66vw] rounded-full"
-        style={{ backgroundColor: color }}
+        className="absolute -left-[14%] -top-[36%] h-[66vw] w-[66vw] rounded-full blur-3xl"
+        style={{ backgroundColor: color, opacity: 0.18 }}
       />
-
-      <div
-        className="blur-reduced animate-bg-scale-2 absolute -bottom-[36%] -right-[14%] h-[58vw] w-[58vw] rounded-full"
-        style={{ backgroundColor: "#15E28B" }}
-      />
-
+      <div className="absolute -bottom-[36%] -right-[14%] h-[58vw] w-[58vw] rounded-full bg-[#15E28B]/20 blur-3xl" />
       <div className="absolute inset-0 bg-[radial-gradient(rgba(21,226,139,0.045)_1px,transparent_1px)] bg-[size:44px_44px]" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.018)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.018)_1px,transparent_1px)] bg-[size:120px_120px]" />
       <div className="absolute inset-0 bg-gradient-to-b from-[#030813]/20 via-[#030813]/76 to-[#030813]" />
     </div>
   );
 }
 
-const LocalhostWarning = React.memo(() => {
+function InfoCard({ children }) {
+  return (
+    <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.028] p-4 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-5">
+      {children}
+    </div>
+  );
+}
+
+function LocalhostWarning() {
   return (
     <div className="rounded-2xl border border-orange-400/25 bg-orange-400/10 px-4 py-3 backdrop-blur-xl">
       <div className="flex items-start gap-3">
         <AlertTriangle size={17} className="mt-0.5 shrink-0 text-orange-300" />
-
         <p className="text-xs font-medium leading-5 text-orange-100/85">
           Localhost test detected. Results may show local server speed, not real
           ISP speed.
@@ -235,13 +189,9 @@ const LocalhostWarning = React.memo(() => {
       </div>
     </div>
   );
-});
+}
 
-LocalhostWarning.displayName = "LocalhostWarning";
-
-/* ─── Status Badge ────────────────────────────────────────── */
-
-const StatusBadge = React.memo(({ loaded, testState, color, engineError }) => {
+function StatusBadge({ loaded, testState, color, engineError }) {
   return (
     <AnimatePresence mode="wait">
       {engineError ? (
@@ -265,7 +215,7 @@ const StatusBadge = React.memo(({ loaded, testState, color, engineError }) => {
           exit={{ opacity: 0, y: 6 }}
           className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.045] px-4 py-2 backdrop-blur-xl"
         >
-          <div className="animate-spin-fast h-3.5 w-3.5 rounded-full border-2 border-white/10 border-t-[#15E28B]" />
+          <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/10 border-t-[#15E28B]" />
           <span className="text-[10px] font-black uppercase tracking-[0.22em] text-white/45">
             Loading
           </span>
@@ -284,13 +234,9 @@ const StatusBadge = React.memo(({ loaded, testState, color, engineError }) => {
           }}
         >
           <span
-            className="animate-pulse-indicator block h-2.5 w-2.5 rounded-full"
-            style={{
-              backgroundColor: color,
-              boxShadow: `0 0 10px ${color}`,
-            }}
+            className="block h-2.5 w-2.5 animate-pulse rounded-full"
+            style={{ backgroundColor: color, boxShadow: `0 0 10px ${color}` }}
           />
-
           <span className="text-[10px] font-black uppercase tracking-[0.22em] text-white/80">
             {PHASES[testState]?.label ?? "Ready"}
           </span>
@@ -298,11 +244,7 @@ const StatusBadge = React.memo(({ loaded, testState, color, engineError }) => {
       )}
     </AnimatePresence>
   );
-});
-
-StatusBadge.displayName = "StatusBadge";
-
-/* ─── Speed Dial ──────────────────────────────────────────── */
+}
 
 function SpeedDial({
   speed = 0,
@@ -316,74 +258,8 @@ function SpeedDial({
   const info = PHASES[phase] ?? PHASES["-1"];
   const color = info.color;
   const showStart = !isRunning && (phase === -1 || phase === 4 || phase === 5);
-
-  const size = 320;
-  const center = size / 2;
-  const radius = 122;
-  const tickRadiusInner = 135;
-  const tickRadiusOuter = 143;
-  const textRadius = 162;
-
-  const angleStart = -120;
-  const angleEnd = 120;
-  const angleSweep = angleEnd - angleStart;
-
-  const trackCircumference = 2 * Math.PI * radius;
-  const trackArcLength = (angleSweep / 360) * trackCircumference;
-
-  const springConfig = { stiffness: 42, damping: 14, mass: 0.8 };
-  const speedSpring = useSpring(0, springConfig);
-
-  useEffect(() => {
-    speedSpring.set(Math.min(speed, dialMax));
-  }, [speed, dialMax, speedSpring]);
-
-  const needleRotation = useTransform(
-    speedSpring,
-    [0, dialMax],
-    [angleStart, angleEnd]
-  );
-
-  const trackDashoffset = useTransform(
-    speedSpring,
-    [0, dialMax],
-    [trackArcLength, 0]
-  );
-
-  const [displayValue, setDisplayValue] = useState("0.0");
-
-  useEffect(() => {
-    const unsubscribe = speedSpring.on("change", (v) => {
-      setDisplayValue(v < 10 && v > 0 ? v.toFixed(2) : v.toFixed(1));
-    });
-
-    return unsubscribe;
-  }, [speedSpring]);
-
-  const ticks = Array.from({ length: 25 }).map((_, i) => {
-    const isMajor = i % 6 === 0;
-    const value = Math.round((i / 24) * dialMax);
-    const angle = angleStart + (i / 24) * angleSweep;
-
-    const p1 = polarToCartesian(center, center, tickRadiusInner, angle);
-    const p2 = polarToCartesian(
-      center,
-      center,
-      isMajor ? tickRadiusOuter + 4 : tickRadiusOuter,
-      angle
-    );
-
-    const textPos = polarToCartesian(center, center, textRadius, angle);
-
-    return {
-      id: i,
-      isMajor,
-      value,
-      p1,
-      p2,
-      textPos,
-    };
-  });
+  const percent = Math.min(100, Math.max(0, (speed / dialMax) * 100));
+  const displayValue = speed < 10 && speed > 0 ? speed.toFixed(2) : speed.toFixed(1);
 
   return (
     <div className="relative mx-auto flex h-[330px] w-[330px] select-none items-center justify-center font-sans sm:h-[380px] sm:w-[380px]">
@@ -392,128 +268,19 @@ function SpeedDial({
         style={{ backgroundColor: color }}
       />
 
-      <svg
-        className="pointer-events-none absolute inset-0 h-full w-full"
-        viewBox={`0 0 ${size} ${size}`}
-        style={{ overflow: "visible" }}
-      >
-        <defs>
-          <filter id="neonGlow" x="-25%" y="-25%" width="150%" height="150%">
-            <feGaussianBlur stdDeviation="4.5" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-
-          <linearGradient id="needleGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-            <stop offset="78%" stopColor={color} />
-            <stop offset="100%" stopColor="#ffffff" />
-          </linearGradient>
-        </defs>
-
-        <g className="opacity-55">
-          {ticks.map((tick) => (
-            <React.Fragment key={`tick-${tick.id}`}>
-              <line
-                x1={tick.p1.x}
-                y1={tick.p1.y}
-                x2={tick.p2.x}
-                y2={tick.p2.y}
-                stroke={
-                  tick.isMajor
-                    ? "rgba(255,255,255,0.7)"
-                    : "rgba(255,255,255,0.25)"
-                }
-                strokeWidth={tick.isMajor ? 2 : 1}
-                strokeLinecap="round"
-              />
-
-              {tick.isMajor && (
-                <text
-                  x={tick.textPos.x}
-                  y={tick.textPos.y}
-                  fill="rgba(255,255,255,0.55)"
-                  fontSize="9.5"
-                  fontWeight="700"
-                  textAnchor="middle"
-                  alignmentBaseline="middle"
-                  className="font-mono tracking-tighter"
-                >
-                  {tick.value}
-                </text>
-              )}
-            </React.Fragment>
-          ))}
-        </g>
-
-        <circle
-          cx={center}
-          cy={center}
-          r={radius}
-          fill="none"
-          stroke="rgba(255,255,255,0.055)"
-          strokeWidth="11"
-          strokeLinecap="round"
-          strokeDasharray={`${trackArcLength} ${trackCircumference}`}
-          transform={`rotate(${angleStart - 90} ${center} ${center})`}
-        />
-
-        <circle
-          cx={center}
-          cy={center}
-          r={radius - 8}
-          fill="none"
-          stroke="rgba(255,255,255,0.025)"
-          strokeWidth="1"
-          strokeDasharray={`${trackArcLength - 15} ${trackCircumference}`}
-          transform={`rotate(${angleStart - 90} ${center} ${center})`}
-        />
-
-        <motion.circle
-          cx={center}
-          cy={center}
-          r={radius}
-          fill="none"
-          stroke={color}
-          strokeWidth="11"
-          strokeLinecap="round"
-          strokeDasharray={`${trackArcLength} ${trackCircumference}`}
-          style={{ strokeDashoffset: trackDashoffset }}
-          transform={`rotate(${angleStart - 90} ${center} ${center})`}
-          filter="url(#neonGlow)"
-          className="transition-colors duration-500"
-        />
-
-        <motion.g
-          style={{
-            rotate: needleRotation,
-            transformOrigin: `${center}px ${center}px`,
-          }}
-        >
-          <polygon
-            points={`${center - 3.5},${center + 13} ${center + 3.5},${
-              center + 13
-            } ${center},${center - radius + 18}`}
-            fill="url(#needleGradient)"
-            className="transition-colors duration-500"
-          />
-
-          <circle
-            cx={center}
-            cy={center - radius + 16}
-            r="2.8"
-            fill="#ffffff"
-            filter="url(#neonGlow)"
-          />
-
-          <circle cx={center} cy={center} r="17" fill="#0b1020" />
-          <circle
-            cx={center}
-            cy={center}
-            r="17"
-            fill="rgba(255,255,255,0.08)"
-          />
-        </motion.g>
-      </svg>
+      <div className="absolute h-[290px] w-[290px] rounded-full border border-white/10 bg-black/20 p-5 shadow-2xl shadow-black/40 sm:h-[330px] sm:w-[330px]">
+        <div className="h-full w-full rounded-full border border-white/10 bg-white/[0.025] p-4">
+          <div className="relative h-full w-full rounded-full border border-white/10">
+            <div className="absolute inset-8 rounded-full border border-white/5" />
+            <div className="absolute left-1/2 top-4 h-[44%] w-1 origin-bottom -translate-x-1/2 rounded-full transition-transform duration-700"
+              style={{
+                background: `linear-gradient(to top, transparent, ${color}, white)`,
+                transform: `translateX(-50%) rotate(${(percent / 100) * 240 - 120}deg)`,
+              }}
+            />
+          </div>
+        </div>
+      </div>
 
       <motion.button
         type="button"
@@ -529,7 +296,6 @@ function SpeedDial({
         }}
         whileHover={disabled ? {} : { scale: 1.02 }}
         whileTap={disabled ? {} : { scale: 0.97 }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
       >
         <AnimatePresence mode="wait">
           {showStart ? (
@@ -539,7 +305,6 @@ function SpeedDial({
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.92 }}
-              transition={{ duration: 0.2 }}
             >
               <div className="flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-white/5 shadow-inner">
                 {phase === 4 || phase === 5 ? (
@@ -548,12 +313,10 @@ function SpeedDial({
                   <Play size={25} className="ml-1 text-white/80" />
                 )}
               </div>
-
               <div className="text-center">
                 <span className="block text-xs font-black uppercase tracking-[0.2em] text-white/80">
                   {phase === 4 || phase === 5 ? "Run Again" : "Start Test"}
                 </span>
-
                 <span className="mt-1 block text-[10px] font-medium uppercase tracking-widest text-white/38">
                   Tap to begin
                 </span>
@@ -566,34 +329,25 @@ function SpeedDial({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
             >
-              <motion.div
+              <div
                 className="mb-1 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.23em]"
                 style={{ color }}
               >
                 {phase !== 0 && <Activity size={12} />}
                 {info.label}
-              </motion.div>
-
+              </div>
               <div className="text-4xl font-black leading-none tracking-tighter text-white tabular-nums drop-shadow-md sm:text-5xl">
                 {displayValue}
               </div>
-
               <span className="mt-1 text-[10px] font-bold uppercase tracking-widest text-white/38">
                 Mbps
               </span>
-
               {isRunning && (
-                <motion.div
-                  className="absolute bottom-5 flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-white/32 transition-colors hover:text-white/60"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.45 }}
-                >
+                <div className="absolute bottom-5 flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-white/32">
                   <Square size={8} className="fill-current" />
                   Stop
-                </motion.div>
+                </div>
               )}
             </motion.div>
           )}
@@ -603,88 +357,56 @@ function SpeedDial({
   );
 }
 
-/* ─── Mini Metric ──────────────────────────────────────────── */
+function MiniMetric({ label, value, unit, icon: Icon, active, color, isValid = true }) {
+  const display = isValid
+    ? value < 10 && value > 0
+      ? value.toFixed(2)
+      : value.toFixed(1)
+    : "—";
 
-const MiniMetric = React.memo(
-  ({ label, value, unit, icon: Icon, active, color, isValid = true }) => {
-    return (
-      <motion.div
-        className="relative overflow-hidden rounded-2xl border px-4 py-3 backdrop-blur-xl"
-        style={{
-          background: active
-            ? `linear-gradient(135deg, ${color}16, rgba(255,255,255,0.035))`
-            : "rgba(255,255,255,0.035)",
-          borderColor: active ? `${color}50` : "rgba(255,255,255,0.09)",
-        }}
-        whileHover={{ y: -2 }}
-      >
-        {active && (
+  return (
+    <motion.div
+      className="relative overflow-hidden rounded-2xl border px-4 py-3 backdrop-blur-xl"
+      style={{
+        background: active
+          ? `linear-gradient(135deg, ${color}16, rgba(255,255,255,0.035))`
+          : "rgba(255,255,255,0.035)",
+        borderColor: active ? `${color}50` : "rgba(255,255,255,0.09)",
+      }}
+      whileHover={{ y: -2 }}
+    >
+      <div className="relative z-10 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
           <div
-            className="absolute inset-0 opacity-10 blur-2xl"
-            style={{ backgroundColor: color }}
-          />
-        )}
-
-        <div className="relative z-10 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <div
-              className="flex h-9 w-9 items-center justify-center rounded-xl border"
-              style={{
-                background: active ? `${color}1F` : "rgba(255,255,255,0.055)",
-                borderColor: active ? `${color}40` : "rgba(255,255,255,0.1)",
-              }}
-            >
-              <Icon
-                size={16}
-                style={{ color: active ? color : "rgba(255,255,255,0.45)" }}
-              />
-            </div>
-
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
-                {label}
-              </p>
-
-              <div className="mt-1 flex items-end gap-1">
-                <span
-                  className="text-2xl font-black leading-none tabular-nums"
-                  style={{
-                    color: active ? color : "rgba(255,255,255,0.9)",
-                  }}
-                >
-                  <AnimatedNumber
-                    value={value}
-                    isValid={isValid}
-                    fmt={(v) =>
-                      v < 10 && v > 0 ? v.toFixed(2) : v.toFixed(1)
-                    }
-                  />
-                </span>
-
-                <span className="pb-0.5 text-[10px] font-bold uppercase text-white/35">
-                  {isValid ? unit : ""}
-                </span>
-              </div>
+            className="flex h-9 w-9 items-center justify-center rounded-xl border"
+            style={{
+              background: active ? `${color}1F` : "rgba(255,255,255,0.055)",
+              borderColor: active ? `${color}40` : "rgba(255,255,255,0.1)",
+            }}
+          >
+            <Icon size={16} style={{ color: active ? color : "rgba(255,255,255,0.45)" }} />
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+              {label}
+            </p>
+            <div className="mt-1 flex items-end gap-1">
+              <span className="text-2xl font-black leading-none tabular-nums" style={{ color: active ? color : "rgba(255,255,255,0.9)" }}>
+                {display}
+              </span>
+              <span className="pb-0.5 text-[10px] font-bold uppercase text-white/35">
+                {isValid ? unit : ""}
+              </span>
             </div>
           </div>
-
-          {active && (
-            <span
-              className="animate-pulse-indicator h-2 w-2 rounded-full"
-              style={{ backgroundColor: color }}
-            />
-          )}
         </div>
-      </motion.div>
-    );
-  }
-);
+        {active && <span className="h-2 w-2 animate-pulse rounded-full" style={{ backgroundColor: color }} />}
+      </div>
+    </motion.div>
+  );
+}
 
-MiniMetric.displayName = "MiniMetric";
-
-/* ─── Step Bar ─────────────────────────────────────────────── */
-
-const StepBar = React.memo(({ testState }) => {
+function StepBar({ testState }) {
   const steps = [
     { id: 2, label: "Latency", icon: Activity },
     { id: 1, label: "Download", icon: ArrowDown },
@@ -696,7 +418,6 @@ const StepBar = React.memo(({ testState }) => {
       {steps.map((step) => {
         const Icon = step.icon;
         const active = testState === step.id;
-
         const done =
           testState === 4 ||
           (step.id === 2 && [1, 3].includes(testState)) ||
@@ -720,70 +441,43 @@ const StepBar = React.memo(({ testState }) => {
       })}
     </div>
   );
-});
+}
 
-StepBar.displayName = "StepBar";
+function ResultBox({ testState, dlVal, ulVal, estimatedPingVal, isLocalhost }) {
+  if (testState !== 4) return null;
 
-/* ─── Result Box ───────────────────────────────────────────── */
+  let label = "Good Connection";
+  let description = "Your network looks stable for browsing, streaming and daily work.";
 
-const ResultBox = React.memo(
-  ({ testState, dlVal, ulVal, estimatedPingVal, isLocalhost }) => {
-    if (testState !== 4) return null;
-
-    let label = "Good Connection";
-    let description = "Your network looks stable for browsing and daily work.";
-
-    if (isLocalhost) {
-      label = "Localhost Result";
-      description =
-        "This is not your real ISP speed because the backend is running locally.";
-    } else if (dlVal >= 200 && ulVal >= 50 && estimatedPingVal <= 30) {
-      label = "Excellent Connection";
-      description = "Great for 4K streaming, gaming, meetings and cloud work.";
-    } else if (dlVal < 25 || estimatedPingVal > 80) {
-      label = "Needs Attention";
-      description =
-        "Your connection may feel slow for calls, uploads, gaming, or live work.";
-    }
-
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-[#15E28B]/20 bg-[#15E28B]/[0.07] p-4 backdrop-blur-xl"
-      >
-        <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#15E28B]/25 bg-[#15E28B]/10">
-            <ShieldCheck size={18} className="text-[#15E28B]" />
-          </div>
-
-          <div>
-            <h3 className="text-sm font-black text-white">{label}</h3>
-            <p className="mt-1 text-xs leading-5 text-white/45">
-              {description}
-            </p>
-          </div>
-        </div>
-      </motion.div>
-    );
+  if (isLocalhost) {
+    label = "Localhost Result";
+    description = "This is not your real ISP speed because the backend is running locally.";
+  } else if (dlVal >= 200 && ulVal >= 50 && estimatedPingVal <= 30) {
+    label = "Excellent Connection";
+    description = "Great for 4K streaming, gaming, meetings and cloud work.";
+  } else if (dlVal < 25 || estimatedPingVal > 80) {
+    label = "Needs Attention";
+    description = "Your connection may feel slow for calls, uploads, gaming, or live work.";
   }
-);
 
-ResultBox.displayName = "ResultBox";
-
-/* ─── Info Card ───────────────────────────────────────────── */
-
-const InfoCard = React.memo(({ children }) => {
   return (
-    <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.028] p-4 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-5">
-      {children}
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="rounded-2xl border border-[#15E28B]/20 bg-[#15E28B]/[0.07] p-4 backdrop-blur-xl"
+    >
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#15E28B]/25 bg-[#15E28B]/10">
+          <ShieldCheck size={18} className="text-[#15E28B]" />
+        </div>
+        <div>
+          <h3 className="text-sm font-black text-white">{label}</h3>
+          <p className="mt-1 text-xs leading-5 text-white/45">{description}</p>
+        </div>
+      </div>
+    </motion.div>
   );
-});
-
-InfoCard.displayName = "InfoCard";
-
-/* ─── SEO Content Section ─────────────────────────────────── */
+}
 
 function SpeedTestGuide() {
   return (
@@ -799,70 +493,79 @@ function SpeedTestGuide() {
 
         <div className="mt-5 space-y-5 text-sm leading-7 text-white/55 sm:text-base">
           <p>
-            AXVOI SpeedTest helps you measure the performance of your internet
-            connection by checking download speed, upload speed, estimated ping,
-            estimated jitter, and overall connection stability.
+            AXVOI SpeedTest is a fast internet speed test online tool that helps
+            you check your download speed, upload speed, ping, latency, jitter,
+            bandwidth and overall network stability in seconds.
           </p>
 
           <p>
-            Download speed shows how quickly your connection receives data from
-            the internet. It affects streaming, website loading, software
-            updates, file downloads, and daily browsing.
+            You can use this speed test to check WiFi speed, broadband speed,
+            modem speed, wireless speed and your complete internet connection
+            performance from one clean dashboard.
           </p>
 
           <p>
-            Upload speed shows how quickly your connection sends data. It is
-            important for video calls, cloud backups, live streaming, and
-            sending large files.
+            If you are searching for “what&apos;s my internet speed”, “check my
+            internet speed”, “how to test internet speed”, or “how to check WiFi
+            speed”, AXVOI gives you simple real-time results for your connection.
           </p>
 
           <p>
-            Estimated ping and jitter are calculated using AXVOI server latency
-            and connection performance. These values are designed to give a
-            practical network quality reading for normal browsing, gaming,
-            meetings, and streaming.
+            For more accurate results, close background downloads, pause video
+            streaming, disconnect unused devices and test near your WiFi router
+            or with an Ethernet cable.
           </p>
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-white/10 bg-black/15 p-5">
-            <h3 className="text-lg font-black text-white">Download Speed</h3>
+            <h3 className="text-lg font-black text-white">Download Speed Test</h3>
             <p className="mt-2 text-sm leading-6 text-white/50">
               Download speed affects streaming, browsing, file downloads, app
-              updates, and how quickly online content loads.
+              updates and how quickly online content loads on your device.
             </p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-black/15 p-5">
-            <h3 className="text-lg font-black text-white">Upload Speed</h3>
+            <h3 className="text-lg font-black text-white">Upload Speed Test</h3>
             <p className="mt-2 text-sm leading-6 text-white/50">
               Upload speed matters for video meetings, sending files, cloud
-              storage, online backups, and live streaming.
+              storage, online backups and live streaming.
             </p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-black/15 p-5">
-            <h3 className="text-lg font-black text-white">Estimated Ping</h3>
+            <h3 className="text-lg font-black text-white">Ping and Latency Test</h3>
             <p className="mt-2 text-sm leading-6 text-white/50">
-              Estimated ping gives a user-friendly latency reading based on
-              AXVOI server response and connection quality.
+              Ping and latency show how quickly your device communicates with a
+              server. Lower latency is better for gaming, calls and live work.
             </p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-black/15 p-5">
-            <h3 className="text-lg font-black text-white">Estimated Jitter</h3>
+            <h3 className="text-lg font-black text-white">Jitter and Stability Test</h3>
             <p className="mt-2 text-sm leading-6 text-white/50">
-              Estimated jitter shows how stable your connection is for calls,
-              gaming, meetings, and live communication.
+              Jitter and network stability show how consistent your connection
+              is for video calls, online gaming, meetings and live communication.
             </p>
           </div>
+        </div>
+
+        <div className="mt-8 rounded-2xl border border-[#15E28B]/20 bg-[#15E28B]/[0.06] p-5">
+          <h3 className="text-lg font-black text-white">
+            Test Internet Speed with AXVOI SpeedTest
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-white/55">
+            Run a speed check to measure your internet connection speed, test
+            network speed, check broadband performance, measure bandwidth and
+            understand whether your connection is ready for streaming, gaming,
+            browsing, downloads, uploads and online work.
+          </p>
         </div>
       </div>
     </section>
   );
 }
-
-/* ─── Main Page ───────────────────────────────────────────── */
 
 export default function SpeedTestPage() {
   const [testState, setTestState] = useState(-1);
@@ -870,14 +573,11 @@ export default function SpeedTestPage() {
   const [engineLoaded, setEngineLoaded] = useState(false);
   const [engineError, setEngineError] = useState(false);
   const [isLocalhost, setIsLocalhost] = useState(false);
-
   const ref = useRef(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setIsLocalhost(
-        ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)
-      );
+      setIsLocalhost(["localhost", "127.0.0.1", "::1"].includes(window.location.hostname));
     }
   }, []);
 
@@ -903,17 +603,13 @@ export default function SpeedTestPage() {
 
     return () => {
       clearTimeout(timer);
-
       const existingScript = document.querySelector('script[src="/speedtest.js"]');
-      if (existingScript) {
-        existingScript.remove();
-      }
+      if (existingScript) existingScript.remove();
 
       if (ref.current) {
         try {
           ref.current.abort();
         } catch {}
-
         ref.current = null;
       }
     };
@@ -921,15 +617,8 @@ export default function SpeedTestPage() {
 
   const pushHistory = useCallback((entry) => {
     try {
-      const prev = JSON.parse(
-        localStorage.getItem("axvoi_speedtest_v3") || "[]"
-      );
-
-      localStorage.setItem(
-        "axvoi_speedtest_v3",
-        JSON.stringify([entry, ...prev].slice(0, 10))
-      );
-
+      const prev = JSON.parse(localStorage.getItem("axvoi_speedtest_v3") || "[]");
+      localStorage.setItem("axvoi_speedtest_v3", JSON.stringify([entry, ...prev].slice(0, 10)));
       window.dispatchEvent(new CustomEvent("speedtest:complete"));
     } catch {}
   }, []);
@@ -945,7 +634,6 @@ export default function SpeedTestPage() {
       try {
         ref.current.abort();
       } catch {}
-
       ref.current = null;
     }
 
@@ -959,16 +647,12 @@ export default function SpeedTestPage() {
     s.setParameter("url_ul", "/api/speedtest/empty");
     s.setParameter("url_ping", "/api/speedtest/ping");
     s.setParameter("url_getIp", "/api/speedtest/ip");
-
     s.setParameter("test_order", "IP_D_U");
-
     s.setParameter("time_dl_max", 10);
     s.setParameter("time_ul_max", 10);
     s.setParameter("time_auto", true);
-
     s.setParameter("xhr_dlMultistream", 3);
     s.setParameter("xhr_ulMultistream", 2);
-
     s.setParameter("ping_count", 10);
     s.setParameter("garbagePhp_chunkSize", 20);
 
@@ -990,23 +674,12 @@ export default function SpeedTestPage() {
         const serverJitter = safeNumber(snap.jitterStatus);
 
         const endEstimatedPing =
-          estimateLocalPing({
-            serverPing,
-            downloadSpeed: endDl,
-            uploadSpeed: endUl,
-          }) || 0;
-
+          estimateLocalPing({ serverPing, downloadSpeed: endDl, uploadSpeed: endUl }) || 0;
         const endEstimatedJitter =
-          estimateJitter({
-            estimatedPing: endEstimatedPing,
-            serverJitter,
-          }) || 0;
+          estimateJitter({ estimatedPing: endEstimatedPing, serverJitter }) || 0;
 
         pushHistory({
-          time: new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
+          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
           dl: endDl.toFixed(1),
           ul: endUl.toFixed(1),
           ping: endEstimatedPing.toFixed(1),
@@ -1024,7 +697,6 @@ export default function SpeedTestPage() {
     try {
       ref.current?.abort();
     } catch {}
-
     ref.current = null;
     setTestState(5);
   }, []);
@@ -1055,17 +727,10 @@ export default function SpeedTestPage() {
   });
 
   const estimatedPingValid = serverPingValid && estimatedPingVal !== null;
-  const estimatedJitterValid =
-    serverJitterValid && estimatedJitterVal !== null;
+  const estimatedJitterValid = serverJitterValid && estimatedJitterVal !== null;
 
-  const dlSpeed = testState === 1 ? dlVal : 0;
-  const ulSpeed = testState === 3 ? ulVal : 0;
-  const speed = dlSpeed || ulSpeed;
-
-  const dialMax = useMemo(
-    () => getDialMax(Math.max(speed, dlVal, ulVal)),
-    [speed, dlVal, ulVal]
-  );
+  const speed = testState === 1 ? dlVal : testState === 3 ? ulVal : 0;
+  const dialMax = useMemo(() => getDialMax(Math.max(speed, dlVal, ulVal)), [speed, dlVal, ulVal]);
 
   return (
     <div className="relative w-full overflow-x-hidden bg-[#030813] text-white selection:bg-[#15E28B]/20">
@@ -1084,21 +749,17 @@ export default function SpeedTestPage() {
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[#15E28B]/25 bg-[#15E28B]/10 shadow-[0_0_20px_rgba(21,226,139,0.13)]">
                   <Gauge size={21} className="text-[#15E28B]" />
                 </div>
-
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#15E28B]">
                     AXVOI SpeedTest
                   </p>
-
-                  <h2 className="mt-1 text-lg font-black text-white">
-                    Network Diagnostics
-                  </h2>
+                  <h2 className="mt-1 text-lg font-black text-white">Network Diagnostics</h2>
                 </div>
               </div>
 
               <p className="mt-4 text-sm leading-6 text-white/50">
-                Measure your internet speed, estimated ping, upload and
-                connection stability in real time.
+                Run an internet speed test online to measure download speed,
+                upload speed, ping, jitter, bandwidth and connection stability.
               </p>
 
               <div className="mt-5 grid gap-3">
@@ -1108,7 +769,6 @@ export default function SpeedTestPage() {
                     Server-based speed measurement
                   </span>
                 </div>
-
                 <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/15 px-4 py-3">
                   <Signal size={16} className="text-sky-400" />
                   <span className="text-xs font-semibold text-white/55">
@@ -1127,12 +787,7 @@ export default function SpeedTestPage() {
             transition={{ duration: 0.35 }}
             className="order-1 flex flex-col items-center text-center xl:order-2"
           >
-            <StatusBadge
-              loaded={engineLoaded}
-              testState={testState}
-              color={color}
-              engineError={engineError}
-            />
+            <StatusBadge loaded={engineLoaded} testState={testState} color={color} engineError={engineError} />
 
             <motion.div
               key={testState}
@@ -1142,11 +797,10 @@ export default function SpeedTestPage() {
               className="mt-4"
             >
               <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
-                Internet Speed Test
+                Internet Speed Test Online
               </h2>
-
               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-white/52 sm:text-base">
-                {phaseInfo.description}
+                {testState === -1 ? PHASES["-1"].description : phaseInfo.description}
               </p>
             </motion.div>
 
@@ -1174,12 +828,10 @@ export default function SpeedTestPage() {
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-sky-400/25 bg-sky-400/10 shadow-[0_0_20px_rgba(56,189,248,0.12)]">
                   <Wifi size={21} className="text-sky-400" />
                 </div>
-
                 <div>
                   <h2 className="text-[10px] font-black uppercase tracking-[0.24em] text-white/35">
                     Active Status
                   </h2>
-
                   <p className="mt-1 text-xl font-black" style={{ color }}>
                     {phaseInfo.label}
                   </p>
@@ -1191,7 +843,7 @@ export default function SpeedTestPage() {
                   ? "Keep this tab open while the test is running."
                   : engineError
                   ? "Speedtest engine failed to load. Check /public/speedtest.js."
-                  : "Press the center dial to begin your internet speed test."}
+                  : "Press the center dial to test your internet speed online."}
               </p>
 
               <div className="mt-5">
@@ -1212,11 +864,7 @@ export default function SpeedTestPage() {
             className="order-4 grid w-full gap-3 sm:grid-cols-2 xl:col-span-3 xl:grid-cols-4"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.4,
-              delay: 0.15,
-              ease: "easeOut",
-            }}
+            transition={{ duration: 0.4, delay: 0.15, ease: "easeOut" }}
           >
             <MiniMetric
               label="Estimated Ping"
@@ -1227,7 +875,6 @@ export default function SpeedTestPage() {
               color={COLORS.ping}
               isValid={estimatedPingValid}
             />
-
             <MiniMetric
               label="Estimated Jitter"
               value={estimatedJitterVal || 0}
@@ -1237,7 +884,6 @@ export default function SpeedTestPage() {
               color="#facc15"
               isValid={estimatedJitterValid}
             />
-
             <MiniMetric
               label="Download"
               value={dlVal}
@@ -1247,7 +893,6 @@ export default function SpeedTestPage() {
               color={COLORS.dl}
               isValid={dlValid}
             />
-
             <MiniMetric
               label="Upload"
               value={ulVal}
@@ -1259,16 +904,16 @@ export default function SpeedTestPage() {
             />
 
             <p className="text-center text-xs leading-5 text-white/35 sm:col-span-2 xl:col-span-4">
-              Ping and jitter are estimated using AXVOI server latency and
-              connection performance.
+              Ping and jitter are estimated using AXVOI server latency and connection performance.
             </p>
           </motion.div>
         </div>
       </section>
 
       <SpeedTestGuide />
-
+      <SpeedTestSeoArticle />
       <SpeedTestFAQ />
     </div>
   );
 }
+

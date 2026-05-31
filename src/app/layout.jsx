@@ -46,7 +46,6 @@ export const metadata = {
     "internet connection speed test",
     "my internet speed test",
     "how to test internet speed",
-    "shopify vs web developer",
     "internet connection test",
     "my wifi speed",
     "test internet speed connection",
@@ -57,7 +56,6 @@ export const metadata = {
     "wifi connectivity test",
     "test speed wifi",
     "what's my internet speed",
-    "shopify vs custom website",
     "how check internet speed",
     "speed test on internet",
     "speed test internet",
@@ -96,7 +94,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/opengraph-image.webp",
+        url: "https://speed.axvoi.com/opengraph-image.webp",
         width: 1200,
         height: 630,
         alt: "AXVOI SpeedTest internet speed test dashboard preview",
@@ -108,7 +106,7 @@ export const metadata = {
     title: "Internet Speed Test — Check WiFi, Ping & Broadband Speed | AXVOI",
     description:
       "Test your internet speed instantly with AXVOI SpeedTest. Check download speed, upload speed, ping, jitter, WiFi performance, broadband speed, latency, and network stability in seconds.",
-    images: ["/opengraph-image.webp"],
+    images: ["https://speed.axvoi.com/opengraph-image.webp"],
   },
   robots: {
     index: true,
@@ -156,7 +154,8 @@ export default function RootLayout({ children }) {
         "publisher": {
           "@id": "https://axvoi.com/#organization"
         },
-        "inLanguage": "en-US"
+        "inLanguage": "en-US",
+        "keywords": metadata.keywords.join(", ")
       },
       {
         "@type": "WebApplication",
@@ -190,7 +189,8 @@ export default function RootLayout({ children }) {
           "@id": "https://axvoi.com/#organization"
         },
         "isAccessibleForFree": true,
-        "inLanguage": "en-US"
+        "inLanguage": "en-US",
+        "keywords": metadata.keywords.join(", ")
       },
       {
         "@type": "SoftwareApplication",
@@ -212,7 +212,8 @@ export default function RootLayout({ children }) {
           "price": "0",
           "priceCurrency": "USD"
         },
-        "isAccessibleForFree": true
+        "isAccessibleForFree": true,
+        "keywords": metadata.keywords.join(", ")
       },
       {
         "@type": "FAQPage",

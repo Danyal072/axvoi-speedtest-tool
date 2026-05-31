@@ -224,21 +224,17 @@ const FAQItem = React.memo(({ item, isOpen, onToggle }) => {
         </div>
       </button>
 
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="border-t border-white/10"
-          >
-            <div className="px-4 py-4 text-sm leading-7 text-white/70 sm:px-6 sm:py-5 sm:text-base">
-              {item.answer}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <motion.div
+        animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+        initial={false}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="overflow-hidden border-t border-white/10"
+        aria-hidden={!isOpen}
+      >
+        <div className="px-4 py-4 text-sm leading-7 text-white/70 sm:px-6 sm:py-5 sm:text-base">
+          {item.answer}
+        </div>
+      </motion.div>
     </motion.div>
   );
 });
@@ -248,12 +244,29 @@ FAQItem.displayName = "FAQItem";
 export default function SpeedTestFAQ() {
   const [openId, setOpenId] = useState(null);
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQ_DATA.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+
   const toggleItem = (id) => {
     setOpenId(openId === id ? null : id);
   };
 
   return (
     <section className="relative z-10 w-full px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <div className="mx-auto max-w-4xl">
         {/* Eyebrow & Heading */}
         <div className="mb-8 text-center sm:mb-10 lg:mb-12">
