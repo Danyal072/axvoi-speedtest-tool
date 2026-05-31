@@ -1141,9 +1141,9 @@ export default function SpeedTestPage() {
               transition={{ duration: 0.25 }}
               className="mt-4"
             >
-              <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
+              <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
                 Internet Speed Test
-              </h1>
+              </h2>
 
               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-white/52 sm:text-base">
                 {phaseInfo.description}
