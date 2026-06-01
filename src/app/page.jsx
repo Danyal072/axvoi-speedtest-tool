@@ -987,12 +987,12 @@ export default function SpeedTestPage() {
 
   return (
   <div className="relative w-full overflow-x-hidden bg-[var(--background)] text-[var(--foreground)] selection:bg-[#15E28B]/20">
-    <section className="relative z-10 h-[calc(100svh-86px)] w-full overflow-hidden px-4 py-4 sm:px-6 lg:px-8">
+    <section className="relative z-10 min-h-[calc(100svh-86px)] lg:h-[calc(100svh-86px)] h-auto w-full overflow-visible lg:overflow-hidden px-4 py-6 sm:px-6 lg:px-8">
       <AmbientBg color={color} />
 
-      <div id="speed-test" className="relative z-10 mx-auto flex h-full w-full max-w-6xl items-center">
+      <div id="speed-test" className="relative z-10 mx-auto flex h-auto lg:h-full w-full max-w-6xl items-center">
         <div 
-          className="relative h-[calc(100%-24px)] w-full rounded-[2rem] border bg-gradient-to-br from-white via-white to-gray-50/40 p-4 sm:p-5 lg:p-6 transition-all duration-1000 ease-in-out overflow-hidden"
+          className="relative h-auto lg:h-[calc(100%-24px)] w-full rounded-[2rem] border bg-gradient-to-br from-white via-white to-gray-50/40 p-5 sm:p-6 lg:p-6 transition-all duration-1000 ease-in-out overflow-visible lg:overflow-hidden"
           style={{
             borderColor: color === COLORS.idle ? "rgba(21, 226, 139, 0.15)" : `${color}25`,
             boxShadow: `0 12px 40px -12px rgba(0, 0, 0, 0.03), 0 0 70px -15px ${color === COLORS.idle ? "rgba(21, 226, 139, 0.1)" : color}0d`,
@@ -1010,15 +1010,15 @@ export default function SpeedTestPage() {
             }}
           />
 
-          <div className="relative z-10 grid h-full items-stretch gap-5 lg:grid-cols-[280px_minmax(420px,1fr)_340px]">
+          <div className="relative z-10 grid h-auto lg:h-full items-stretch gap-6 lg:gap-5 grid-cols-1 lg:grid-cols-[280px_minmax(420px,1fr)_340px]">
             {/* LEFT PANEL */}
             <motion.aside
               initial={{ opacity: 0, x: -12 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3 }}
-              className="flex h-full flex-col justify-center space-y-4 overflow-hidden"
+              className="order-3 lg:order-none flex h-auto lg:h-full flex-col justify-center space-y-4 lg:space-y-6 text-center lg:text-left items-center lg:items-start"
             >
-              <div>
+              <div className="flex flex-col items-center lg:items-start">
                 <StatusBadge
                   loaded={engineLoaded}
                   testState={testState}
@@ -1026,25 +1026,25 @@ export default function SpeedTestPage() {
                   engineError={engineError}
                 />
 
-                <h1 className="mt-5 text-3xl font-black leading-tight tracking-tight text-[var(--foreground)] lg:text-4xl">
+                <h1 className="mt-4 lg:mt-5 text-3xl sm:text-4xl lg:text-4xl font-black leading-tight tracking-tight text-[var(--foreground)]">
                   Internet <span className="text-[#15E28B]">Speed Test</span> Online
                 </h1>
 
-                <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                <p className="mt-3 text-sm leading-6 text-[var(--muted)] max-w-md lg:max-w-none">
                   Check download speed, upload speed, ping, jitter, WiFi
                   performance and network stability in seconds.
                 </p>
               </div>
 
-              <div className="grid gap-2">
-                <div className="hero-feature-pill flex items-center gap-3 rounded-xl border border-[#15E28B]/10 bg-[#15E28B]/05 px-3 py-3 transition hover:bg-[#15E28B]/08">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 w-full">
+                <div className="hero-feature-pill flex items-center justify-center lg:justify-start gap-3 rounded-xl border border-[#15E28B]/10 bg-[#15E28B]/05 px-3 py-3 transition hover:bg-[#15E28B]/08">
                   <Server size={16} className="text-[#15E28B]" />
                   <span className="text-xs font-bold text-gray-700">
                     Server-based speed test
                   </span>
                 </div>
 
-                <div className="hero-feature-pill flex items-center gap-3 rounded-xl border border-sky-500/10 bg-sky-500/5 px-3 py-3 transition hover:bg-sky-500/8">
+                <div className="hero-feature-pill flex items-center justify-center lg:justify-start gap-3 rounded-xl border border-sky-500/10 bg-sky-500/5 px-3 py-3 transition hover:bg-sky-500/8">
                   <Signal size={16} className="text-sky-500" />
                   <span className="text-xs font-bold text-gray-700">
                     Smart latency estimation
@@ -1052,7 +1052,7 @@ export default function SpeedTestPage() {
                 </div>
               </div>
 
-              <div className="min-h-[72px]">
+              <div className="min-h-0 lg:min-h-[72px] w-full">
                 {isLocalhost && testState !== 4 && <LocalhostWarning />}
               </div>
             </motion.aside>
@@ -1062,7 +1062,7 @@ export default function SpeedTestPage() {
               initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.35 }}
-              className="flex h-full flex-col items-center justify-center overflow-hidden"
+              className="order-1 lg:order-none flex h-auto lg:h-full flex-col items-center justify-center overflow-visible lg:overflow-hidden py-4 lg:py-0 w-full"
             >
               {testState === 4 ? (
                 /* Completed — compact result on top + compact dial centered */
@@ -1114,9 +1114,9 @@ export default function SpeedTestPage() {
               initial={{ opacity: 0, x: 12 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3 }}
-              className="flex h-full flex-col justify-center gap-3 overflow-hidden"
+              className="order-2 lg:order-none flex h-auto lg:h-full flex-col justify-center gap-4 lg:gap-3 overflow-visible lg:overflow-hidden w-full mt-4 lg:mt-0"
             >
-              <div className="grid gap-3">
+              <div className="grid grid-cols-2 lg:grid-cols-1 gap-3 w-full">
                 <MiniMetric
                   label={testState === 4 ? "Ping" : "Estimated Ping"}
                   value={estimatedPingVal || 0}
@@ -1154,7 +1154,7 @@ export default function SpeedTestPage() {
                   isValid={ulValid}
                 />
               </div>
-              <p className="min-h-[40px] text-center text-xs leading-5 text-gray-500">
+              <p className="min-h-0 lg:min-h-[40px] text-center text-xs leading-5 text-gray-500 mt-2 lg:mt-0">
                 {testState === 4
                   ? "Test completed successfully using AXVOI network servers."
                   : "Ping and jitter are estimated using AXVOI server latency and connection performance."}
