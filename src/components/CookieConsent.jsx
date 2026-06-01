@@ -70,10 +70,10 @@ export default function CookieConsent() {
               We use cookies to improve your experience and analyze site
               performance.{" "}
               <Link
-                href="/privacy"
+                href="/privacy#cookies"
                 className="font-semibold text-[#00df81] underline-offset-2 hover:underline"
               >
-                Learn more
+                Cookie Policy
               </Link>
             </p>
 

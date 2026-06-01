@@ -9,6 +9,7 @@ const YEAR = new Date().getFullYear();
 const NAV_LINKS = [
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
+  { label: "Cookie Policy", href: "/privacy#cookies" },
   { label: "Contact", href: "https://axvoi.com/contact", external: true },
 ];
 

@@ -8,6 +8,7 @@ import {
   Mail,
   AlertTriangle,
 } from "lucide-react";
+import Link from "next/link";
 
 export const metadata = {
   title: "Privacy Policy — AXVOI SpeedTest by AXVOI",
@@ -45,44 +46,44 @@ const SECTIONS = [
       "LibreSpeed-based testing may use your IP address only for technical purposes such as showing network or ISP-related information and completing the test process. This information is used for diagnostics and display purposes, not to create personal user profiles inside AXVOI SpeedTest.",
   },
   {
-    title: "5. Local Browser History",
+    title: "5. Local Browser History & Storage Keys",
     content:
-      "If the tool shows recent test history, that history is stored locally in your own browser using localStorage. This means the data remains on your device/browser and is not submitted to AXVOI by default. You can clear it by clearing your browser site data.",
+      "If the tool shows recent test history, that history is stored locally in your own browser using localStorage (specifically in the key 'axvoi_speedtest_v3'). This means the data remains entirely on your device/browser and is not submitted to AXVOI. Additionally, when you accept or dismiss the cookie consent banner, your preference is saved in local storage under 'axvoi_cookie_consent' to prevent the notice from appearing again.",
   },
   {
-    title: "6. Google Analytics",
+    title: "6. Google Analytics & Performance Cookies",
     content:
-      "AXVOI may use Google Analytics to understand general website usage, such as page views, device type, browser type, approximate location, traffic source, and user interactions. Google Analytics helps us improve the website experience. Google Analytics may use cookies or similar technologies depending on your browser settings and regional consent requirements.",
+      "AXVOI may use Google Analytics to collect anonymous metrics about website usage, such as page views, device type, browser type, approximate geographic location, traffic source, and speed test interactions. These analytics cookies help us understand how AXVOI SpeedTest is used so we can improve network capacity, optimize routing, and enhance general performance. Analytics data is processed in accordance with Google's privacy practices.",
   },
   {
-    title: "7. Cookies and Similar Technologies",
+    title: "7. Detailed Cookie Statement",
     content:
-      "The core speed test tool does not need cookies to measure your internet speed. However, Google Analytics may use cookies or similar technologies to provide website usage statistics. You can control or block cookies through your browser settings.",
+      "Cookies are small text files that websites place on your device when you visit them to make them work, remember user choices, or analyze performance. AXVOI SpeedTest uses these technologies to improve your experience, remember your cookie consent preferences, support speed test features (like your local diagnostic history), and analyze traffic patterns. We use local storage for essential utility states and anonymized analytics cookies for traffic analysis. The core speed test diagnostic does not require cookies to measure your internet connection speed.",
   },
   {
-    title: "8. Third-Party Services",
+    title: "8. How to Manage Cookies and Your Choices",
+    content:
+      "You have complete control over cookies and browser local storage. You can block or delete cookies through your web browser's privacy settings, use privacy-focused extensions, or clear your local browser site data. Please note that clearing local storage will erase your local speed test history. If you do not want Google Analytics to process usage information, you may use browser settings, privacy extensions, or Google’s available opt-out tools.",
+  },
+  {
+    title: "9. Third-Party Services",
     content:
       "AXVOI SpeedTest may rely on third-party technologies, including LibreSpeed for speed testing functionality and Google Analytics for website analytics. These third-party services may process limited technical information according to their own policies and configurations.",
   },
   {
-    title: "9. Data Sharing",
+    title: "10. Data Sharing",
     content:
       "AXVOI does not sell personal data collected through AXVOI SpeedTest. Since the tool does not collect personal information by default, there is no user account data or registration data to sell. Analytics data may be processed by Google Analytics according to Google’s own service terms and privacy practices.",
   },
   {
-    title: "10. Data Security",
+    title: "11. Data Security",
     content:
       "We aim to keep the service secure and reliable. However, no website or online service can be guaranteed to be completely secure. Users should avoid entering personal or sensitive information into any tool or page unless it is specifically required and clearly explained.",
   },
   {
-    title: "11. Children’s Privacy",
+    title: "12. Children’s Privacy",
     content:
       "AXVOI SpeedTest is a general network diagnostic tool and is not intended to knowingly collect personal information from children. Since the tool does not require account creation or personal data submission, it is not designed to collect personal information from minors.",
-  },
-  {
-    title: "12. Your Choices",
-    content:
-      "You can disable cookies, block analytics scripts, use browser privacy controls, clear localStorage, or clear site data at any time. If you do not want Google Analytics to process usage information, you may use browser settings, privacy extensions, or Google’s available opt-out tools.",
   },
   {
     title: "13. Changes to This Policy",
@@ -191,20 +192,26 @@ export default function PrivacyPolicyPage() {
         {/* Main Policy Content */}
         <div className="mt-10 rounded-[2rem] border border-border bg-card p-5 shadow-2xl shadow-black/30 backdrop-blur-2xl sm:p-7 lg:p-8">
           <div className="space-y-4">
-            {SECTIONS.map((section) => (
-              <article
-                key={section.title}
-                className="rounded-3xl border border-border bg-[var(--card)]/70 p-5 transition hover:border-primary/25 hover:bg-[var(--card)]"
-              >
-                <h2 className="text-lg font-black text-foreground">
-                  {section.title}
-                </h2>
+            {SECTIONS.map((section) => {
+              const isCookieSection = section.title.toLowerCase().includes("cookie");
+              return (
+                <article
+                  key={section.title}
+                  id={isCookieSection ? "cookies" : undefined}
+                  className={`rounded-3xl border border-border bg-[var(--card)]/70 p-5 transition hover:border-primary/25 hover:bg-[var(--card)] scroll-mt-24 ${
+                    isCookieSection ? "border-emerald-400/25 bg-emerald-400/5 shadow-[0_0_20px_rgba(21,226,139,0.05)]" : ""
+                  }`}
+                >
+                  <h2 className="text-lg font-black text-foreground">
+                    {section.title}
+                  </h2>
 
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                  {section.content}
-                </p>
-              </article>
-            ))}
+                  <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                    {section.content}
+                  </p>
+                </article>
+              );
+            })}
           </div>
         </div>
 
@@ -225,6 +232,14 @@ export default function PrivacyPolicyPage() {
               website analytics. Users can manage cookies through their browser
               privacy settings.
             </p>
+
+            <Link
+              href="#cookies"
+              className="mt-5 inline-flex items-center gap-2 rounded-full border border-[#15E28B]/30 bg-primary/10 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-primary transition hover:bg-[#15E28B]/20"
+            >
+              <Cookie size={15} />
+              Jump to Cookie Statement
+            </Link>
           </div>
 
           <div className="rounded-[2rem] border border-border bg-card p-6 backdrop-blur-xl">
