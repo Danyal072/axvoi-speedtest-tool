@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 
 export default function SpeedTestSeoArticle() {
   const articleSchema = {
@@ -25,20 +27,53 @@ export default function SpeedTestSeoArticle() {
     },
   };
 
+  useEffect(() => {
+    let ctx;
+    const initSeoAnim = async () => {
+      const { gsap } = await import("gsap");
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      gsap.registerPlugin(ScrollTrigger);
+
+      ctx = gsap.context(() => {
+        gsap.fromTo(
+          ".seo-article-animate",
+          { opacity: 0, y: 35 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: ".seo-article-animate",
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      });
+    };
+
+    initSeoAnim();
+
+    return () => {
+      if (ctx) ctx.revert();
+    };
+  }, []);
+
   return (
     <section className="relative z-10 px-4 py-12 sm:px-6 lg:px-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
-      <div className="mx-auto max-w-5xl rounded-[1.75rem] border border-white/10 bg-white/[0.025] p-6 shadow-2xl backdrop-blur-2xl sm:p-8 lg:p-10">
-        <article className="prose prose-invert max-w-none prose-p:leading-relaxed prose-headings:font-black prose-headings:tracking-tight prose-a:text-[#15E28B] prose-strong:text-white/90">
-          <h2 className="mb-6 text-3xl font-black tracking-tight text-white sm:text-4xl">
+      <div className="seo-article-animate mx-auto max-w-5xl rounded-2xl border border-[var(--border)] bg-white p-6 shadow-2xl sm:p-8 lg:p-10">
+        <article className="prose max-w-none prose-p:leading-relaxed prose-headings:font-black prose-headings:tracking-tight prose-a:text-primary">
+          <h2 className="mb-6 text-3xl font-black tracking-tight text-[var(--foreground)] sm:text-4xl">
             Everything You Need to Know About Internet Speed Testing
           </h2>
 
-          <p className="text-white/60">
-            In today's digital world, having a reliable internet connection is
+          <p className="text-[var(--muted)]">
+            In today&apos;s digital world, having a reliable internet connection is
             essential for almost everything we do. Whether you are working from
             home, streaming high-definition movies, playing competitive online
             games, or simply browsing the web, your internet speed determines the
@@ -48,12 +83,12 @@ export default function SpeedTestSeoArticle() {
             your internet service provider (ISP).
           </p>
 
-          <h3 className="mt-8 text-2xl font-black text-white">
+          <h3 className="mt-8 text-2xl font-black text-[var(--foreground)]">
             What Is an Internet Speed Test?
           </h3>
-          <p className="text-white/60">
+          <p className="text-[var(--muted)]">
             An internet speed test is a real-time diagnostic tool that measures
-            your network's current performance. By sending and receiving small
+            your network&apos;s current performance. By sending and receiving small
             amounts of data between your device and a nearby test server, the
             tool calculates how fast your connection handles information. This
             process evaluates critical metrics, including download speed, upload
@@ -63,10 +98,10 @@ export default function SpeedTestSeoArticle() {
             quality.
           </p>
 
-          <h3 className="mt-8 text-2xl font-black text-white">
+          <h3 className="mt-8 text-2xl font-black text-[var(--foreground)]">
             Why Download Speed Matters
           </h3>
-          <p className="text-white/60">
+          <p className="text-[var(--muted)]">
             Download speed refers to how quickly data travels from the internet
             to your device. It is arguably the most recognizable metric because
             it heavily impacts everyday activities. A fast download speed means
@@ -77,10 +112,10 @@ export default function SpeedTestSeoArticle() {
             struggling to keep up with the demands of your household.
           </p>
 
-          <h3 className="mt-8 text-2xl font-black text-white">
+          <h3 className="mt-8 text-2xl font-black text-[var(--foreground)]">
             Why Upload Speed Matters
           </h3>
-          <p className="text-white/60">
+          <p className="text-[var(--muted)]">
             While download speed focuses on pulling data, upload speed measures
             how quickly your device can send data to the internet. Historically
             overlooked, upload speed has become incredibly important for remote
@@ -92,10 +127,10 @@ export default function SpeedTestSeoArticle() {
             a meeting, a low upload speed is often the culprit.
           </p>
 
-          <h3 className="mt-8 text-2xl font-black text-white">
+          <h3 className="mt-8 text-2xl font-black text-[var(--foreground)]">
             Understanding Ping, Latency, and Jitter
           </h3>
-          <p className="text-white/60">
+          <p className="text-[var(--muted)]">
             Speed is only one part of the equation; responsiveness is the other.
             Ping and latency measure the delay in milliseconds (ms) it takes for a
             data packet to travel from your device to a server and back. A low ping
@@ -107,10 +142,10 @@ export default function SpeedTestSeoArticle() {
             the key to a smooth, uninterrupted online experience.
           </p>
 
-          <h3 className="mt-8 text-2xl font-black text-white">
+          <h3 className="mt-8 text-2xl font-black text-[var(--foreground)]">
             WiFi vs. Broadband: Why Is WiFi Slower?
           </h3>
-          <p className="text-white/60">
+          <p className="text-[var(--muted)]">
             Many users wonder why their WiFi speed test results are lower than
             the broadband package speed promised by their ISP. The reality is
             that a wireless connection is susceptible to interference. Physical
@@ -122,10 +157,10 @@ export default function SpeedTestSeoArticle() {
             directly into the router using an Ethernet cable.
           </p>
 
-          <h3 className="mt-8 text-2xl font-black text-white">
+          <h3 className="mt-8 text-2xl font-black text-[var(--foreground)]">
             How Router Placement Affects Your Speed
           </h3>
-          <p className="text-white/60">
+          <p className="text-[var(--muted)]">
             Where you place your WiFi router has a massive impact on your internet
             connection test results. If your router is hidden in a closet, tucked
             behind a TV, or placed on the floor, the signal will struggle to reach
@@ -136,10 +171,10 @@ export default function SpeedTestSeoArticle() {
             performance throughout the house.
           </p>
 
-          <h3 className="mt-8 text-2xl font-black text-white">
+          <h3 className="mt-8 text-2xl font-black text-[var(--foreground)]">
             Why Results Change From Test to Test
           </h3>
-          <p className="text-white/60">
+          <p className="text-[var(--muted)]">
             It is completely normal to see variations in your internet speed
             results if you run multiple tests back-to-back. Internet speeds
             fluctuate due to network congestion, especially during peak evening
@@ -151,10 +186,10 @@ export default function SpeedTestSeoArticle() {
             to these natural variations.
           </p>
 
-          <h3 className="mt-8 text-2xl font-black text-white">
+          <h3 className="mt-8 text-2xl font-black text-[var(--foreground)]">
             How to Improve a Slow Internet Speed
           </h3>
-          <p className="text-white/60">
+          <p className="text-[var(--muted)]">
             If your connection speed test consistently shows poor results, there
             are several steps you can take. First, try restarting your modem and
             router—this simple reboot clears temporary memory issues and often
@@ -166,10 +201,10 @@ export default function SpeedTestSeoArticle() {
             are no service outages or issues with your physical line.
           </p>
 
-          <h3 className="mt-8 text-2xl font-black text-white">
+          <h3 className="mt-8 text-2xl font-black text-[var(--foreground)]">
             Who Can Benefit from AXVOI SpeedTest?
           </h3>
-          <p className="text-white/60">
+          <p className="text-[var(--muted)]">
             AXVOI SpeedTest is designed to provide actionable insights for every
             type of internet user. For home users and remote workers, it ensures
             that your connection can handle video calls and streaming without

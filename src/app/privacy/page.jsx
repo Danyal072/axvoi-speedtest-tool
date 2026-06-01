@@ -93,73 +93,73 @@ const SECTIONS = [
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#030813] text-white">
+    <main className="relative min-h-screen overflow-hidden bg-background text-foreground">
       {/* Background */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute -top-44 left-1/2 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-[#15E28B]/10 blur-3xl" />
+        <div className="absolute -top-44 left-1/2 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
         <div className="absolute bottom-0 left-0 h-96 w-96 rounded-full bg-sky-400/8 blur-3xl" />
         <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-[#15E28B]/8 blur-3xl" />
         <div className="absolute inset-0 bg-[radial-gradient(rgba(21,226,139,0.055)_1px,transparent_1px)] bg-[size:44px_44px]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#030813]/30 via-[#030813]/85 to-[#030813]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-white/85 to-white" />
       </div>
 
       <section className="relative z-10 mx-auto w-full max-w-6xl px-5 py-12 sm:px-6 lg:px-8 lg:py-16">
         {/* Hero */}
         <div className="mx-auto max-w-3xl text-center">
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#15E28B]/30 bg-[#15E28B]/10 shadow-[0_0_30px_rgba(21,226,139,0.18)]">
-            <ShieldCheck size={30} className="text-[#15E28B]" />
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#15E28B]/30 bg-primary/10 shadow-[0_0_30px_rgba(21,226,139,0.18)]">
+            <ShieldCheck size={30} className="text-primary" />
           </div>
 
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#15E28B]/20 bg-[#15E28B]/8 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#15E28B]">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#15E28B]/20 bg-[#15E28B]/8 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-primary">
             AXVOI Privacy Notice
           </div>
 
-          <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-black tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             Privacy Policy
           </h1>
 
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/55">
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-muted-foreground">
             AXVOI SpeedTest by AXVOI is designed to measure internet
             performance without asking users for personal information. This
             policy explains what the tool does not collect, how speed testing
             works, and how Google Analytics may be used.
           </p>
 
-          <p className="mt-4 text-sm text-white/35">
+          <p className="mt-4 text-sm text-muted-foreground">
             Last updated: January 2026
           </p>
         </div>
 
         {/* Privacy Summary Cards */}
         <div className="mt-12 grid gap-4 md:grid-cols-3">
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl">
-            <EyeOff size={25} className="text-[#15E28B]" />
-            <h2 className="mt-4 text-lg font-black text-white">
+          <div className="rounded-3xl border border-border bg-card p-5 backdrop-blur-xl">
+            <EyeOff size={25} className="text-primary" />
+            <h2 className="mt-4 text-lg font-black text-foreground">
               No User Account Data
             </h2>
-            <p className="mt-2 text-sm leading-6 text-white/45">
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
               The tool does not require sign-up, login, name, email, phone
               number, or payment details.
             </p>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl">
+          <div className="rounded-3xl border border-border bg-card p-5 backdrop-blur-xl">
             <Server size={25} className="text-sky-400" />
-            <h2 className="mt-4 text-lg font-black text-white">
+            <h2 className="mt-4 text-lg font-black text-foreground">
               Technical Testing Only
             </h2>
-            <p className="mt-2 text-sm leading-6 text-white/45">
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
               Speed test values are used to show download, upload, ping, and
               jitter results.
             </p>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl">
+          <div className="rounded-3xl border border-border bg-card p-5 backdrop-blur-xl">
             <BarChart3 size={25} className="text-orange-400" />
-            <h2 className="mt-4 text-lg font-black text-white">
+            <h2 className="mt-4 text-lg font-black text-foreground">
               Google Analytics
             </h2>
-            <p className="mt-2 text-sm leading-6 text-white/45">
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
               AXVOI may use analytics to understand website traffic and improve
               user experience.
             </p>
@@ -174,10 +174,10 @@ export default function PrivacyPolicyPage() {
             </div>
 
             <div>
-              <h2 className="text-lg font-black text-white">
+              <h2 className="text-lg font-black text-foreground">
                 Important Analytics Notice
               </h2>
-              <p className="mt-2 text-sm leading-7 text-white/55">
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">
                 The AXVOI SpeedTest tool itself does not collect personal user
                 data by default. However, because Google Analytics may be used on
                 the website, limited usage and device information may be processed
@@ -189,18 +189,18 @@ export default function PrivacyPolicyPage() {
         </div>
 
         {/* Main Policy Content */}
-        <div className="mt-10 rounded-[2rem] border border-white/10 bg-white/[0.035] p-5 shadow-2xl shadow-black/30 backdrop-blur-2xl sm:p-7 lg:p-8">
+        <div className="mt-10 rounded-[2rem] border border-border bg-card p-5 shadow-2xl shadow-black/30 backdrop-blur-2xl sm:p-7 lg:p-8">
           <div className="space-y-4">
             {SECTIONS.map((section) => (
               <article
                 key={section.title}
-                className="rounded-3xl border border-white/10 bg-[#07101f]/70 p-5 transition hover:border-[#15E28B]/25 hover:bg-[#07101f]"
+                className="rounded-3xl border border-border bg-[var(--card)]/70 p-5 transition hover:border-primary/25 hover:bg-[var(--card)]"
               >
-                <h2 className="text-lg font-black text-white">
+                <h2 className="text-lg font-black text-foreground">
                   {section.title}
                 </h2>
 
-                <p className="mt-3 text-sm leading-7 text-white/55">
+                <p className="mt-3 text-sm leading-7 text-muted-foreground">
                   {section.content}
                 </p>
               </article>
@@ -210,16 +210,16 @@ export default function PrivacyPolicyPage() {
 
         {/* Extra Explanation */}
         <div className="mt-10 grid gap-4 lg:grid-cols-2">
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#15E28B]/25 bg-[#15E28B]/10">
-              <Cookie size={22} className="text-[#15E28B]" />
+          <div className="rounded-[2rem] border border-border bg-card p-6 backdrop-blur-xl">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/25 bg-primary/10">
+              <Cookie size={22} className="text-primary" />
             </div>
 
-            <h2 className="mt-5 text-xl font-black text-white">
+            <h2 className="mt-5 text-xl font-black text-foreground">
               About Cookies
             </h2>
 
-            <p className="mt-3 text-sm leading-7 text-white/50">
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">
               AXVOI SpeedTest does not need cookies to perform the speed test.
               Google Analytics may use cookies or similar technologies for
               website analytics. Users can manage cookies through their browser
@@ -227,16 +227,16 @@ export default function PrivacyPolicyPage() {
             </p>
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl">
+          <div className="rounded-[2rem] border border-border bg-card p-6 backdrop-blur-xl">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-sky-400/25 bg-sky-400/10">
               <Globe size={22} className="text-sky-400" />
             </div>
 
-            <h2 className="mt-5 text-xl font-black text-white">
+            <h2 className="mt-5 text-xl font-black text-foreground">
               LibreSpeed Usage
             </h2>
 
-            <p className="mt-3 text-sm leading-7 text-white/50">
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">
               LibreSpeed technology may process technical connection information
               during a test, such as speed, latency, and IP-related details
               required for diagnostics. AXVOI SpeedTest uses this information to display
@@ -247,15 +247,15 @@ export default function PrivacyPolicyPage() {
 
         {/* Contact Box */}
         <div className="mt-10 rounded-[2rem] border border-[#15E28B]/20 bg-[#15E28B]/8 p-6 text-center backdrop-blur-xl">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-[#15E28B]/25 bg-[#15E28B]/10">
-            <Mail size={22} className="text-[#15E28B]" />
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/25 bg-primary/10">
+            <Mail size={22} className="text-primary" />
           </div>
 
-          <h2 className="mt-4 text-xl font-black text-white">
+          <h2 className="mt-4 text-xl font-black text-foreground">
             Privacy Questions?
           </h2>
 
-          <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-white/50">
+          <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
             For questions about this Privacy Policy, AXVOI SpeedTest, or AXVOI
             services, please contact AXVOI through the official website.
           </p>
@@ -264,7 +264,7 @@ export default function PrivacyPolicyPage() {
             href="https://axvoi.com/contact"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-5 inline-flex items-center gap-2 rounded-full border border-[#15E28B]/30 bg-[#15E28B]/10 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-[#15E28B] transition hover:bg-[#15E28B]/20"
+            className="mt-5 inline-flex items-center gap-2 rounded-full border border-[#15E28B]/30 bg-primary/10 px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-primary transition hover:bg-[#15E28B]/20"
           >
             <Globe size={15} />
             Contact AXVOI

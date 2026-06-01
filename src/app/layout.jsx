@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GoogleAnalyticsWrapper from "@/components/GoogleAnalyticsWrapper";
+import CookieConsent from "@/components/CookieConsent";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -92,21 +93,12 @@ export const metadata = {
     siteName: "AXVOI SpeedTest",
     locale: "en_US",
     type: "website",
-    images: [
-      {
-        url: "https://speed.axvoi.com/opengraph-image.webp",
-        width: 1200,
-        height: 630,
-        alt: "AXVOI SpeedTest internet speed test dashboard preview",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Internet Speed Test — Check WiFi, Ping & Broadband Speed | AXVOI",
     description:
       "Test your internet speed instantly with AXVOI SpeedTest. Check download speed, upload speed, ping, jitter, WiFi performance, broadband speed, latency, and network stability in seconds.",
-    images: ["https://speed.axvoi.com/opengraph-image.webp"],
   },
   robots: {
     index: true,
@@ -278,7 +270,7 @@ export default function RootLayout({ children }) {
       className={`${inter.variable} ${spaceGrotesk.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen w-full overflow-x-hidden bg-[#030813] text-white antialiased">
+      <body className="min-h-screen w-full overflow-x-hidden bg-background text-foreground antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -291,6 +283,8 @@ export default function RootLayout({ children }) {
           <main className="flex-1">{children}</main>
           <Footer />
         </div>
+
+        <CookieConsent />
       </body>
     </html>
   );

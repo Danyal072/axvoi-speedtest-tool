@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, HelpCircle } from "lucide-react";
-
+import Link from "next/link";
 const FAQ_DATA = [
   {
     id: 1,
@@ -190,14 +190,14 @@ const FAQ_DATA = [
 const FAQItem = React.memo(({ item, isOpen, onToggle }) => {
   return (
     <motion.div
-      className="overflow-hidden rounded-2xl border border-white/10 backdrop-blur-xl transition-all duration-200"
+      className="faq-item-animate overflow-hidden rounded-2xl border border-[var(--border)] backdrop-blur-xl transition-all duration-200"
       style={{
         background: isOpen
           ? "linear-gradient(135deg, rgba(21,226,139,0.08), rgba(255,255,255,0.02))"
           : "rgba(255,255,255,0.035)",
-        borderColor: isOpen ? "rgba(21,226,139,0.35)" : "rgba(255,255,255,0.1)",
+        borderColor: isOpen ? "rgba(21,226,139,0.35)" : "rgba(0,0,0,0.08)",
         boxShadow: isOpen
-          ? "0 0 28px rgba(21,226,139,0.12), inset 0 1px 0 rgba(255,255,255,0.1)"
+          ? "0 0 28px rgba(21,226,139,0.12), inset 0 1px 0 rgba(0,0,0,0.08)"
           : "none",
       }}
     >
@@ -207,7 +207,7 @@ const FAQItem = React.memo(({ item, isOpen, onToggle }) => {
         className="w-full px-4 py-4 text-left sm:px-6 sm:py-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#15E28B] focus-visible:ring-offset-2 focus-visible:ring-offset-[#030813]"
       >
         <div className="flex items-center justify-between gap-4">
-          <h3 className="text-sm font-bold leading-6 text-white sm:text-base">
+          <h3 className="text-sm font-bold leading-6 text-[var(--foreground)] sm:text-base">
             {item.question}
           </h3>
 
@@ -228,10 +228,10 @@ const FAQItem = React.memo(({ item, isOpen, onToggle }) => {
         animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
         initial={false}
         transition={{ duration: 0.2, ease: "easeOut" }}
-        className="overflow-hidden border-t border-white/10"
+        className="overflow-hidden border-t border-[var(--border)]"
         aria-hidden={!isOpen}
       >
-        <div className="px-4 py-4 text-sm leading-7 text-white/70 sm:px-6 sm:py-5 sm:text-base">
+        <div className="px-4 py-4 text-sm leading-7 text-[var(--muted)] sm:px-6 sm:py-5 sm:text-base">
           {item.answer}
         </div>
       </motion.div>
@@ -261,6 +261,59 @@ export default function SpeedTestFAQ() {
     setOpenId(openId === id ? null : id);
   };
 
+  useEffect(() => {
+    let ctx;
+    const initFAQAnim = async () => {
+      const { gsap } = await import("gsap");
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      gsap.registerPlugin(ScrollTrigger);
+
+      ctx = gsap.context(() => {
+        // Animate the Header texts
+        gsap.fromTo(
+          ".faq-header-animate",
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: ".faq-header-trigger",
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+
+        // Animate the grid items
+        gsap.fromTo(
+          ".faq-item-animate",
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.04,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: ".faq-container-animate",
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      });
+    };
+
+    initFAQAnim();
+
+    return () => {
+      if (ctx) ctx.revert();
+    };
+  }, []);
+
   return (
     <section className="relative z-10 w-full px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <script
@@ -269,26 +322,26 @@ export default function SpeedTestFAQ() {
       />
       <div className="mx-auto max-w-4xl">
         {/* Eyebrow & Heading */}
-        <div className="mb-8 text-center sm:mb-10 lg:mb-12">
-          <div className="mb-3 flex items-center justify-center gap-2">
+        <div className="faq-header-trigger mb-8 text-center sm:mb-10 lg:mb-12">
+          <div className="faq-header-animate mb-3 flex items-center justify-center gap-2">
             <HelpCircle size={18} className="text-[#15E28B]" />
             <span className="text-xs font-black uppercase tracking-[0.24em] text-[#15E28B]">
               AXVOI Help Center
             </span>
           </div>
 
-          <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+          <h2 className="faq-header-animate text-3xl font-black tracking-tight text-[var(--foreground)] sm:text-4xl">
             Frequently Asked Questions
           </h2>
 
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-white/60 sm:text-base sm:leading-7">
+          <p className="faq-header-animate mx-auto mt-4 max-w-2xl text-sm leading-6 text-gray-500 sm:text-base sm:leading-7">
             Everything you need to know about internet speed, ping, jitter, Wi-Fi
             performance, and AXVOI SpeedTest.
           </p>
         </div>
 
         {/* FAQ Grid */}
-        <div className="space-y-3 sm:space-y-4">
+        <div className="faq-container-animate space-y-3 sm:space-y-4">
           {FAQ_DATA.map((item) => (
             <FAQItem
               key={item.id}
@@ -305,14 +358,14 @@ export default function SpeedTestFAQ() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
           viewport={{ once: true, margin: "-100px" }}
-          className="mt-12 rounded-2xl border border-white/10 bg-white/[0.028] p-6 text-center backdrop-blur-2xl sm:mt-16 sm:p-8"
+          className="mt-12 rounded-2xl border border-[var(--border)] bg-white/[0.028] p-6 text-center backdrop-blur-2xl sm:mt-16 sm:p-8"
         >
-          <p className="text-sm text-white/70 sm:text-base">
-            Can't find what you're looking for?{" "}
+          <Link href="#speed-test" className="text-sm text-[var(--muted)] sm:text-base">
+            Can&apos;t find what you&apos;re looking for?{" "}
             <span className="text-[#15E28B]">
               Test your connection and explore results for more insights.
             </span>
-          </p>
+          </Link>
         </motion.div>
       </div>
     </section>

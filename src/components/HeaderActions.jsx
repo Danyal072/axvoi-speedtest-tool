@@ -23,13 +23,11 @@ function HistoryDrawer({ history, isOpen, onClose, onClearHistory }) {
   const [confirmClear, setConfirmClear] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line
     setMounted(true);
   }, []);
 
   useEffect(() => {
     if (!isOpen) {
-      // eslint-disable-next-line
       setConfirmClear(false);
       return;
     }
@@ -59,7 +57,7 @@ function HistoryDrawer({ history, isOpen, onClose, onClearHistory }) {
           <motion.button
             type="button"
             aria-label="Close history overlay"
-            className="absolute inset-0 h-full w-full bg-black/75 backdrop-blur-md"
+            className="absolute inset-0 h-full w-full bg-gray-950/45 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -71,28 +69,28 @@ function HistoryDrawer({ history, isOpen, onClose, onClearHistory }) {
             role="dialog"
             aria-modal="true"
             aria-labelledby="history-dialog-title"
-            className="absolute bottom-0 left-1/2 flex max-h-[86svh] w-full max-w-5xl -translate-x-1/2 flex-col overflow-hidden rounded-t-[2rem] border border-white/10 bg-[#030813]/95 shadow-2xl shadow-black/70 backdrop-blur-2xl"
-            initial={{ y: "100%", opacity: 0.85 }}
+            className="absolute bottom-0 left-1/2 flex max-h-[86svh] w-full max-w-5xl -translate-x-1/2 flex-col overflow-hidden rounded-t-[2rem] border border-[var(--border)] bg-white shadow-2xl"
+            initial={{ y: "100%", opacity: 0.9 }}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "100%", opacity: 0.85 }}
+            exit={{ y: "100%", opacity: 0.9 }}
             transition={{ type: "spring", damping: 30, stiffness: 230 }}
           >
             {/* Top bar */}
-            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-white/10 bg-white/[0.035] px-5 py-5 md:px-7">
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--border)] bg-white px-5 py-5 md:px-7">
               <div className="flex min-w-0 items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#15E28B]/25 bg-[#15E28B]/10 shadow-[0_0_24px_rgba(21,226,139,0.15)]">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-[#15E28B]/25 bg-[#15E28B]/10">
                   <History size={19} className="text-[#15E28B]" />
                 </div>
 
                 <div className="min-w-0">
                   <h2
                     id="history-dialog-title"
-                    className="truncate text-base font-black tracking-tight text-white md:text-lg"
+                    className="truncate text-base font-black tracking-tight text-[var(--foreground)] md:text-lg"
                   >
                     Test History
                   </h2>
 
-                  <p className="mt-0.5 truncate text-xs text-white/40">
+                  <p className="mt-0.5 truncate text-xs text-[var(--muted)]">
                     Your recent network diagnostics results
                   </p>
                 </div>
@@ -103,7 +101,7 @@ function HistoryDrawer({ history, isOpen, onClose, onClearHistory }) {
                   <button
                     type="button"
                     onClick={() => setConfirmClear(true)}
-                    className="hidden items-center gap-2 rounded-full border border-red-400/20 bg-red-400/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-red-200 transition hover:border-red-400/35 hover:bg-red-400/15 sm:inline-flex"
+                    className="hidden items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-red-600 transition hover:border-red-300 hover:bg-red-100 sm:inline-flex"
                   >
                     <Trash2 size={14} />
                     Delete Data
@@ -114,7 +112,7 @@ function HistoryDrawer({ history, isOpen, onClose, onClearHistory }) {
                   type="button"
                   onClick={onClose}
                   aria-label="Close history"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/50 transition hover:bg-white/[0.08] hover:text-white active:scale-95"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-white text-gray-500 transition hover:bg-gray-50 hover:text-gray-900 active:scale-95"
                 >
                   <X size={19} />
                 </button>
@@ -123,11 +121,11 @@ function HistoryDrawer({ history, isOpen, onClose, onClearHistory }) {
 
             {/* Mobile delete button */}
             {history.length > 0 && (
-              <div className="border-b border-white/10 px-5 py-3 sm:hidden">
+              <div className="border-b border-[var(--border)] bg-white px-5 py-3 sm:hidden">
                 <button
                   type="button"
                   onClick={() => setConfirmClear(true)}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-[10px] font-black uppercase tracking-[0.16em] text-red-200 transition hover:border-red-400/35 hover:bg-red-400/15"
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[10px] font-black uppercase tracking-[0.16em] text-red-600 transition hover:border-red-300 hover:bg-red-100"
                 >
                   <Trash2 size={14} />
                   Delete My Data
@@ -142,20 +140,20 @@ function HistoryDrawer({ history, isOpen, onClose, onClearHistory }) {
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
-                  className="border-b border-red-400/15 bg-red-400/10 px-5 py-4 md:px-7"
+                  className="border-b border-red-200 bg-red-50 px-5 py-4 md:px-7"
                 >
-                  <div className="flex flex-col gap-4 rounded-2xl border border-red-400/20 bg-black/20 p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-col gap-4 rounded-2xl border border-red-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-start gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-red-400/25 bg-red-400/10">
-                        <AlertTriangle size={18} className="text-red-300" />
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-red-200 bg-red-50">
+                        <AlertTriangle size={18} className="text-red-500" />
                       </div>
 
                       <div>
-                        <p className="text-sm font-black text-white">
+                        <p className="text-sm font-black text-gray-900">
                           Delete saved test history?
                         </p>
 
-                        <p className="mt-1 text-xs leading-5 text-white/45">
+                        <p className="mt-1 text-xs leading-5 text-gray-600">
                           This will remove your locally saved speed test history
                           from this browser. This action cannot be undone.
                         </p>
@@ -166,7 +164,7 @@ function HistoryDrawer({ history, isOpen, onClose, onClearHistory }) {
                       <button
                         type="button"
                         onClick={() => setConfirmClear(false)}
-                        className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white/50 transition hover:bg-white/[0.08] hover:text-white"
+                        className="rounded-full border border-[var(--border)] bg-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
                       >
                         Cancel
                       </button>
@@ -177,7 +175,7 @@ function HistoryDrawer({ history, isOpen, onClose, onClearHistory }) {
                           onClearHistory();
                           setConfirmClear(false);
                         }}
-                        className="rounded-full border border-red-400/25 bg-red-400/15 px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-red-200 transition hover:bg-red-400/25"
+                        className="rounded-full border border-red-300 bg-red-600 px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-white transition hover:bg-red-700"
                       >
                         Delete
                       </button>
@@ -188,18 +186,18 @@ function HistoryDrawer({ history, isOpen, onClose, onClearHistory }) {
             </AnimatePresence>
 
             {/* Content */}
-            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 md:px-7">
+            <div className="min-h-0 flex-1 overflow-y-auto bg-gray-50 px-5 py-5 md:px-7">
               {history.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 bg-white/[0.03] px-6 py-14 text-center">
+                <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-[var(--border)] bg-white px-6 py-14 text-center">
                   <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#15E28B]/20 bg-[#15E28B]/10">
                     <Wifi size={24} className="text-[#15E28B]" />
                   </div>
 
-                  <h3 className="text-sm font-bold text-white">
+                  <h3 className="text-sm font-black text-gray-900">
                     No saved data available
                   </h3>
 
-                  <p className="mt-2 max-w-sm text-sm leading-6 text-white/40">
+                  <p className="mt-2 max-w-sm text-sm leading-6 text-gray-600">
                     Your test history is stored only in this browser. Run a speed
                     test and your results will appear here.
                   </p>
@@ -209,7 +207,7 @@ function HistoryDrawer({ history, isOpen, onClose, onClearHistory }) {
                   {history.map((item, i) => (
                     <motion.div
                       key={`${item.time}-${i}`}
-                      className="group rounded-2xl border border-white/[0.07] bg-white/[0.035] p-4 transition hover:border-[#15E28B]/20 hover:bg-white/[0.055]"
+                      className="group rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm transition hover:border-[#15E28B]/30 hover:shadow-md"
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.035 }}
@@ -217,54 +215,54 @@ function HistoryDrawer({ history, isOpen, onClose, onClearHistory }) {
                       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         {/* Time */}
                         <div className="min-w-[150px]">
-                          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/30">
+                          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-400">
                             Test Time
                           </p>
 
-                          <p className="mt-1 text-sm font-semibold text-white/65">
+                          <p className="mt-1 text-sm font-bold text-gray-900">
                             {item.time || "Recent test"}
                           </p>
                         </div>
 
                         {/* Stats */}
                         <div className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-3">
-                          <div className="rounded-2xl border border-[#15E28B]/10 bg-[#15E28B]/5 p-3">
-                            <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-white/35">
+                          <div className="rounded-2xl border border-[#15E28B]/20 bg-[#15E28B]/5 p-3">
+                            <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-gray-500">
                               <ArrowDown size={11} />
                               Down
                             </span>
 
                             <p className="mt-1 text-lg font-black text-[#15E28B]">
                               {item.dl || "—"}
-                              <span className="ml-1 text-[10px] font-semibold text-white/35">
+                              <span className="ml-1 text-[10px] font-semibold text-gray-500">
                                 Mbps
                               </span>
                             </p>
                           </div>
 
-                          <div className="rounded-2xl border border-sky-400/10 bg-sky-400/5 p-3">
-                            <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-white/35">
+                          <div className="rounded-2xl border border-sky-200 bg-sky-50 p-3">
+                            <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-gray-500">
                               <ArrowUp size={11} />
                               Up
                             </span>
 
-                            <p className="mt-1 text-lg font-black text-sky-400">
+                            <p className="mt-1 text-lg font-black text-sky-500">
                               {item.ul || "—"}
-                              <span className="ml-1 text-[10px] font-semibold text-white/35">
+                              <span className="ml-1 text-[10px] font-semibold text-gray-500">
                                 Mbps
                               </span>
                             </p>
                           </div>
 
-                          <div className="rounded-2xl border border-orange-400/10 bg-orange-400/5 p-3">
-                            <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-white/35">
+                          <div className="rounded-2xl border border-orange-200 bg-orange-50 p-3">
+                            <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-gray-500">
                               <Activity size={11} />
                               Ping
                             </span>
 
-                            <p className="mt-1 text-lg font-black text-orange-400">
+                            <p className="mt-1 text-lg font-black text-orange-500">
                               {item.ping || "—"}
-                              <span className="ml-1 text-[10px] font-semibold text-white/35">
+                              <span className="ml-1 text-[10px] font-semibold text-gray-500">
                                 ms
                               </span>
                             </p>
@@ -327,7 +325,6 @@ export default function HeaderActions() {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line
     loadHistory();
 
     window.addEventListener("speedtest:complete", loadHistory);
@@ -357,7 +354,7 @@ export default function HeaderActions() {
           <motion.div
             initial={{ opacity: 0, scale: 0.92, y: -4 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="hidden max-w-[260px] items-center gap-2 rounded-full border border-white/10 bg-white/[0.045] px-4 py-2 text-xs font-semibold text-white/60 shadow-inner backdrop-blur-xl lg:flex"
+            className="hidden max-w-[260px] items-center gap-2 rounded-full border border-[var(--border)] bg-white px-4 py-2 text-xs font-semibold text-gray-600 shadow-sm lg:flex"
           >
             <span className="relative flex h-2.5 w-2.5 shrink-0">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#15E28B] opacity-40" />
@@ -376,20 +373,15 @@ export default function HeaderActions() {
           whileTap={{ scale: 0.96 }}
           onClick={() => setShowHistory(true)}
           aria-label="Open test history"
-          className="group relative overflow-hidden rounded-full border border-[#15E28B]/25 bg-[#15E28B]/10 px-4 py-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#15E28B]/80 backdrop-blur-xl transition hover:border-[#15E28B]/40 hover:bg-[#15E28B]/15 hover:text-[#15E28B] md:px-5"
+          className="group relative overflow-hidden rounded-full border border-[#15E28B]/25 bg-[#15E28B]/10 px-4 py-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#047857] transition hover:border-[#15E28B]/40 hover:bg-[#15E28B]/15 md:px-5"
         >
-          <span className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-[100%]" />
-
           <span className="relative flex items-center gap-2">
-            <Clock
-              size={15}
-              className="text-[#15E28B]/75 transition group-hover:text-[#15E28B]"
-            />
+            <Clock size={15} className="text-[#15E28B]" />
 
             <span className="hidden sm:inline">History</span>
 
             {history.length > 0 && (
-              <span className="ml-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#15E28B] px-1.5 text-[10px] font-black tracking-normal text-[#030813]">
+              <span className="ml-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#15E28B] px-1.5 text-[10px] font-black tracking-normal text-[#022c1a]">
                 {history.length}
               </span>
             )}
