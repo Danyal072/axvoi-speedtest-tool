@@ -373,15 +373,15 @@ export default function HeaderActions() {
           whileTap={{ scale: 0.96 }}
           onClick={() => setShowHistory(true)}
           aria-label="Open test history"
-          className="group relative overflow-hidden rounded-full border border-[#15E28B]/25 bg-[#15E28B]/10 px-4 py-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#047857] transition hover:border-[#15E28B]/40 hover:bg-[#15E28B]/15 md:px-5"
+          className="group relative overflow-hidden rounded-full border border-[#00df81]/25 bg-[#00df81]/10 px-4 py-2.5 text-xs font-black uppercase tracking-[0.18em] text-[#00df81] transition hover:border-[#00df81]/40 hover:bg-[#00df81]/15 hover:text-white md:px-5"
         >
           <span className="relative flex items-center gap-2">
-            <Clock size={15} className="text-[#15E28B]" />
+            <Clock size={15} className="text-[#00df81]" />
 
             <span className="hidden sm:inline">History</span>
 
             {history.length > 0 && (
-              <span className="ml-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#15E28B] px-1.5 text-[10px] font-black tracking-normal text-[#022c1a]">
+              <span className="ml-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#00df81] px-1.5 text-[10px] font-black tracking-normal text-[#022c1a]">
                 {history.length}
               </span>
             )}

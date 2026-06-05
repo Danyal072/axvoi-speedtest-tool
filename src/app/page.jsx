@@ -1168,5 +1168,110 @@ export default function SpeedTestPage() {
     <SpeedTestGuide />
     <SpeedTestSeoArticle />
     <SpeedTestFAQ />
+    <MoreToolsSection />
+    <ToolsCtaBanner />
   </div>
-)};
+  );
+}
+
+function MoreToolsSection() {
+  const tools = [
+    {
+      title: "Brat Generator",
+      description: "Create brat-style green text, album covers, memes, and PNG images online for free.",
+      link: "https://axvoi.com/tools/brat-generator",
+      btnText: "Open Brat Generator",
+    },
+    {
+      title: "AXVOI Tools",
+      description: "Discover more free online tools for creators, developers, and everyday users.",
+      link: "https://axvoi.com/tools",
+      btnText: "Explore Tools",
+    },
+    {
+      title: "AXVOI Blog",
+      description: "Read helpful guides about AI, technology, websites, apps, and digital tools.",
+      link: "https://axvoi.com/blog",
+      btnText: "Read Blog",
+    },
+  ];
+
+  return (
+    <section className="relative z-10 px-4 py-12 sm:px-6 lg:px-8 border-t border-[var(--border)] bg-[#f9fafb]/50">
+      <div className="mx-auto max-w-5xl">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl font-black tracking-tight text-[var(--foreground)] sm:text-3xl">
+            More Free Tools by <span className="text-[#00df81]">AXVOI</span>
+          </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-gray-500 sm:text-base">
+            Explore other fast, free, and browser-based tools from AXVOI.
+          </p>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-3">
+          {tools.map((tool) => (
+            <div
+              key={tool.title}
+              className="group flex flex-col justify-between rounded-2xl border border-[var(--border)] bg-white p-6 shadow-sm transition hover:border-[#00df81]/40 hover:shadow-md"
+            >
+              <div>
+                <h3 className="text-lg font-black text-[var(--foreground)] group-hover:text-[#00df81] transition-colors flex items-center gap-1.5">
+                  {tool.title}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-gray-500">
+                  {tool.description}
+                </p>
+              </div>
+
+              <div className="mt-6">
+                <a
+                  href={tool.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-gray-700 shadow-sm transition hover:border-[#00df81]/30 hover:bg-[#00df81]/10 hover:text-[#022c1a]"
+                >
+                  {tool.btnText}
+                  <span className="opacity-65">→</span>
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ToolsCtaBanner() {
+  return (
+    <section className="relative z-10 px-4 py-12 sm:px-6 lg:px-8 border-t border-[var(--border)] bg-white">
+      <div className="mx-auto max-w-4xl rounded-[2rem] border border-[#00df81]/25 bg-gradient-to-br from-emerald-50/40 via-white to-white p-8 sm:p-10 text-center shadow-sm">
+        <h2 className="text-2xl font-black tracking-tight text-[var(--foreground)] sm:text-3xl">
+          Need More Free Online Tools?
+        </h2>
+        <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-gray-600 sm:text-base">
+          AXVOI creates simple, fast, and useful web tools for creators, developers, and everyday users.
+        </p>
+
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a
+            href="https://axvoi.com/tools"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-11 w-full sm:w-auto items-center justify-center rounded-xl bg-[#00df81] px-6 text-xs font-black uppercase tracking-[0.16em] text-[#022c1a] shadow-sm transition hover:bg-[#00c974] active:scale-[0.98]"
+          >
+            Explore AXVOI Tools
+          </a>
+          <a
+            href="https://axvoi.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-11 w-full sm:w-auto items-center justify-center rounded-xl border border-gray-200 bg-white px-6 text-xs font-black uppercase tracking-[0.16em] text-gray-700 shadow-sm transition hover:bg-gray-50 active:scale-[0.98]"
+          >
+            Visit AXVOI
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}

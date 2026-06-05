@@ -6,13 +6,6 @@ import Link from "next/link";
 
 const YEAR = new Date().getFullYear();
 
-const NAV_LINKS = [
-  { label: "Privacy", href: "/privacy" },
-  { label: "Terms", href: "/terms" },
-  { label: "Cookie Policy", href: "/privacy#cookies" },
-  { label: "Contact", href: "https://axvoi.com/contact", external: true },
-];
-
 export default function Footer() {
   useEffect(() => {
     let ctx;
@@ -29,7 +22,7 @@ export default function Footer() {
             opacity: 1,
             y: 0,
             duration: 0.6,
-            stagger: 0.1,
+            stagger: 0.08,
             ease: "power2.out",
             scrollTrigger: {
               trigger: ".footer-container-animate",
@@ -49,11 +42,11 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="relative mt-auto w-full border-t border-[var(--border)] bg-[#f9fafb]">
-      <div className="footer-container-animate mx-auto flex max-w-7xl flex-col gap-6 px-5 py-7 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-          {/* Brand */}
-          <div className="footer-item-animate flex flex-col items-center gap-3 text-center md:items-start md:text-left">
+    <footer className="relative mt-auto w-full border-t border-[var(--border)] bg-[#f9fafb] text-gray-600">
+      <div className="footer-container-animate mx-auto max-w-7xl px-5 py-12 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
+          {/* Column 1: Brand */}
+          <div className="footer-item-animate flex flex-col items-center text-center md:items-start md:text-left gap-3">
             <Link
               href="/"
               className="flex items-center gap-3 transition hover:opacity-80"
@@ -62,71 +55,148 @@ export default function Footer() {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50">
                 <Wifi size={18} className="text-[#00df81]" />
               </div>
-
               <div>
                 <p className="text-base font-black tracking-tight text-gray-900">
                   AXVOI <span className="text-[#00df81]">SpeedTest</span>
                 </p>
-
                 <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.22em] text-gray-500">
                   Professional Diagnostics
                 </p>
               </div>
             </Link>
-
-            <p className="max-w-sm text-sm leading-6 text-gray-600">
-              A clean and fast internet speed test experience powered by AXVOI.
+            <p className="mt-2 text-sm leading-6 text-gray-600 max-w-xs">
+              A free internet speed test tool by AXVOI.
             </p>
           </div>
 
-          {/* Center badges */}
-          <div className="footer-item-animate flex flex-wrap items-center justify-center gap-2">
-            <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-gray-600 shadow-sm">
-              <ShieldCheck size={14} className="text-[#00df81]" />
-              Secure Test
-            </div>
-
-            <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-gray-600 shadow-sm">
-              <Activity size={14} className="text-sky-500" />
-              Real-time Metrics
-            </div>
+          {/* Column 2: SpeedTest */}
+          <div className="footer-item-animate flex flex-col items-center text-center md:items-start md:text-left">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-500 mb-4">
+              SpeedTest
+            </p>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/" className="text-sm text-gray-600 hover:text-emerald-700 transition">
+                  Speed Test
+                </Link>
+              </li>
+              <li>
+                <Link href="/" className="text-sm text-gray-600 hover:text-emerald-700 transition">
+                  Internet Speed Test Online
+                </Link>
+              </li>
+            </ul>
           </div>
 
-          {/* Links */}
-          <nav
-            className="footer-item-animate flex flex-wrap items-center justify-center gap-3"
-            aria-label="Footer navigation"
-          >
-            {NAV_LINKS.map(({ label, href, external }) =>
-              external ? (
+          {/* Column 3: AXVOI */}
+          <div className="footer-item-animate flex flex-col items-center text-center md:items-start md:text-left">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-500 mb-4">
+              AXVOI
+            </p>
+            <ul className="space-y-3">
+              <li>
                 <a
-                  key={label}
-                  href={href}
+                  href="https://axvoi.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-gray-500 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+                  className="text-sm text-gray-600 hover:text-emerald-700 transition inline-flex items-center gap-1"
                 >
-                  {label}
-                  <ExternalLink
-                    size={11}
-                    className="opacity-50 transition group-hover:opacity-100"
-                  />
+                  AXVOI Home
+                  <ExternalLink size={11} className="opacity-50" />
                 </a>
-              ) : (
-                <Link
-                  key={label}
-                  href={href}
-                  className="inline-flex items-center rounded-full border border-gray-200 bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-gray-500 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
+              </li>
+              <li>
+                <a
+                  href="https://axvoi.com/tools"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-600 hover:text-emerald-700 transition inline-flex items-center gap-1"
                 >
-                  {label}
-                </Link>
-              )
-            )}
-          </nav>
+                  Tools
+                  <ExternalLink size={11} className="opacity-50" />
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://axvoi.com/tools/brat-generator"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-600 hover:text-emerald-700 transition inline-flex items-center gap-1"
+                >
+                  Brat Generator
+                  <ExternalLink size={11} className="opacity-50" />
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://axvoi.com/blog"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-600 hover:text-emerald-700 transition inline-flex items-center gap-1"
+                >
+                  Blog
+                  <ExternalLink size={11} className="opacity-50" />
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://axvoi.com/contact"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-600 hover:text-emerald-700 transition inline-flex items-center gap-1"
+                >
+                  Contact
+                  <ExternalLink size={11} className="opacity-50" />
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Legal */}
+          <div className="footer-item-animate flex flex-col items-center text-center md:items-start md:text-left">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-500 mb-4">
+              Legal
+            </p>
+            <ul className="space-y-3">
+              <li>
+                <a
+                  href="https://axvoi.com/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-600 hover:text-emerald-700 transition inline-flex items-center gap-1"
+                >
+                  Privacy Policy
+                  <ExternalLink size={11} className="opacity-50" />
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://axvoi.com/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-600 hover:text-emerald-700 transition inline-flex items-center gap-1"
+                >
+                  Terms & Conditions
+                  <ExternalLink size={11} className="opacity-50" />
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://axvoi.com/cookies"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-600 hover:text-emerald-700 transition inline-flex items-center gap-1"
+                >
+                  Cookies Policy
+                  <ExternalLink size={11} className="opacity-50" />
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="footer-item-animate flex flex-col items-center justify-between gap-3 border-t border-gray-200 pt-5 text-center sm:flex-row sm:text-left">
+        <div className="footer-item-animate mt-12 border-t border-gray-200 pt-6 flex flex-col items-center justify-between gap-4 sm:flex-row text-center sm:text-left">
           <p className="text-xs text-gray-500">
             © {YEAR} AXVOI. All rights reserved.
           </p>

@@ -19,10 +19,10 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata = {
-  metadataBase: new URL("https://axvoi.com"),
-  title: "Internet Speed Test Online - Check WiFi, Ping & Broadband Speed",
+  metadataBase: new URL("https://speed.axvoi.com"),
+  title: "Internet Speed Test Online – Check WiFi, Ping & Download Speed",
   description:
-    "Test your internet speed instantly with AXVOI SpeedTest. Check download speed, upload speed, WiFi performance, broadband speed, and network stability in seconds.",
+    "Test your internet speed online with AXVOI SpeedTest. Check download speed, upload speed, ping, jitter, WiFi performance, and network stability instantly.",
   keywords: [
     "internet speed test",
     "speed test",
@@ -86,19 +86,19 @@ export const metadata = {
   ],
   authors: [{ name: "AXVOI" }],
   openGraph: {
-    title: "Internet Speed Test Online - Check WiFi, Ping & Broadband Speed",
+    title: "Internet Speed Test Online – Check WiFi, Ping & Download Speed",
     description:
-      "Test your internet speed test online instantly with AXVOI SpeedTest. Check download, upload, WiFi, broadband, and stability.",
-    url: "https://axvoi.com",
+      "Test your internet speed online with AXVOI SpeedTest. Check download speed, upload speed, ping, jitter, WiFi performance, and network stability instantly.",
+    url: "https://speed.axvoi.com/",
     siteName: "AXVOI SpeedTest",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Internet Speed Test — Check WiFi, Ping & Broadband Speed | AXVOI",
+    title: "Internet Speed Test Online – Check WiFi, Ping & Download Speed",
     description:
-      "Test your internet speed instantly with AXVOI SpeedTest. Check download speed, upload speed, ping, jitter, WiFi performance, broadband speed, latency, and network stability in seconds.",
+      "Test your internet speed online with AXVOI SpeedTest. Check download speed, upload speed, ping, jitter, WiFi performance, and network stability instantly.",
   },
   robots: {
     index: true,
@@ -112,7 +112,7 @@ export const metadata = {
     },
   },
   alternates: {
-    canonical: "/",
+    canonical: "https://speed.axvoi.com/",
   },
 };
 export const viewport = {
@@ -138,8 +138,8 @@ export default function RootLayout({ children }) {
       },
       {
         "@type": "WebSite",
-        "@id": "https://axvoi.com/#website",
-        "url": "https://axvoi.com",
+        "@id": "https://speed.axvoi.com/#website",
+        "url": "https://speed.axvoi.com/",
         "name": "AXVOI SpeedTest",
         "alternateName": "AXVOI Internet Speed Test",
         "description": "AXVOI SpeedTest is an online internet speed test tool for checking download speed, upload speed, ping, jitter, WiFi performance, broadband speed, latency, bandwidth, and network stability.",
@@ -151,11 +151,11 @@ export default function RootLayout({ children }) {
       },
       {
         "@type": "WebApplication",
-        "@id": "https://axvoi.com/#webapplication",
+        "@id": "https://speed.axvoi.com/#webapplication",
         "name": "AXVOI SpeedTest",
-        "url": "https://axvoi.com",
+        "url": "https://speed.axvoi.com/",
         "applicationCategory": "UtilitiesApplication",
-        "operatingSystem": "All",
+        "operatingSystem": "Web",
         "browserRequirements": "Requires JavaScript and a modern web browser.",
         "description": "Test your internet speed instantly with AXVOI SpeedTest. Check download speed, upload speed, ping, jitter, WiFi performance, broadband speed, latency, bandwidth, and network stability in seconds.",
         "offers": {
@@ -186,11 +186,11 @@ export default function RootLayout({ children }) {
       },
       {
         "@type": "SoftwareApplication",
-        "@id": "https://axvoi.com/#softwareapplication",
+        "@id": "https://speed.axvoi.com/#softwareapplication",
         "name": "AXVOI SpeedTest",
         "applicationCategory": "UtilitiesApplication",
         "operatingSystem": "Web Browser",
-        "url": "https://axvoi.com",
+        "url": "https://speed.axvoi.com/",
         "description": "AXVOI SpeedTest is a free browser-based speed test tool that measures internet download speed, upload speed, ping, jitter, latency, and network stability.",
         "softwareVersion": "1.0.0",
         "author": {
@@ -209,7 +209,7 @@ export default function RootLayout({ children }) {
       },
       {
         "@type": "FAQPage",
-        "@id": "https://axvoi.com/#faq",
+        "@id": "https://speed.axvoi.com/#faq",
         "mainEntity": [
           {
             "@type": "Question",

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cookie, X } from "lucide-react";
-import Link from "next/link";
 
 const CONSENT_KEY = "axvoi_cookie_consent";
 
@@ -67,14 +66,25 @@ export default function CookieConsent() {
 
             {/* Body */}
             <p className="mt-3 text-[13px] leading-5 text-gray-600">
-              We use cookies to improve your experience and analyze site
-              performance.{" "}
-              <Link
-                href="/privacy#cookies"
+              We use essential and performance cookies to improve AXVOI SpeedTest. Learn more in our{" "}
+              <a
+                href="https://axvoi.com/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="font-semibold text-[#00df81] underline-offset-2 hover:underline"
               >
-                Cookie Policy
-              </Link>
+                Privacy Policy
+              </a>{" "}
+              and{" "}
+              <a
+                href="https://axvoi.com/cookies"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-[#00df81] underline-offset-2 hover:underline"
+              >
+                Cookies Policy
+              </a>
+              .
             </p>
 
             {/* Buttons */}
