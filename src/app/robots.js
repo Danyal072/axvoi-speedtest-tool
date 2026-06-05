@@ -1,5 +1,5 @@
 export default function robots() {
-  const baseUrl = "https://axvoi.com";
+  const baseUrl = "https://speed.axvoi.com";
 
   return {
     rules: {

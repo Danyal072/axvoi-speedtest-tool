@@ -1,5 +1,5 @@
 export default function sitemap() {
-  const baseUrl = "https://axvoi.com"; // Consider updating to https://speedtest.axvoi.com if deployed on a subdomain
+  const baseUrl = "https://speed.axvoi.com";
 
   return [
     {
